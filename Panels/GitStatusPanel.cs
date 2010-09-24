@@ -104,6 +104,7 @@ public class GitStatusPanel : GitPanel {
       Refresh();
   }
 
+  private string commitMessage = "";
   public override void OnGUI() {
     Color c = GUI.color;
     GUILayout.BeginHorizontal();
@@ -124,6 +125,9 @@ public class GitStatusPanel : GitPanel {
       GUILayout.EndVertical();
       GUILayout.BeginVertical();
         GUILayout.Box("Lorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\n", "box", ExpandWidth, ExpandHeight);
+        float height = GUI.skin.GetStyle("textarea").CalcHeight(new GUIContent("X"), 100);
+        // TODO: Make this scrollable.
+        commitMessage = EditorGUILayout.TextArea(commitMessage, GUILayout.Height(height * 9 + 2));
       GUILayout.EndVertical();
     GUILayout.EndHorizontal();
   }
