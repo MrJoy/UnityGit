@@ -58,8 +58,12 @@ public class GitShell : EditorWindow {
   protected GitAboutPanel aboutPanel = new GitAboutPanel();
 
 //  public void Update() { }
-  public void OnEnable() { }
-  public void OnDisable() { }
+  public void OnEnable() {
+    aboutPanel.OnEnable();
+  }
+  public void OnDisable() {
+    aboutPanel.OnDisable();
+  }
   public void OnLostFocus() { }
   public void OnDestroy() { }
 

@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEditor;
 
 public abstract class GitPanel {
-  public void OnEnable() {}
-  public void OnDisable() {}
+  public virtual void OnEnable() {}
+  public virtual void OnDisable() {}
   public abstract void OnGUI();
 
   protected static GUILayoutOption ExpandWidth = GUILayout.ExpandWidth(true),

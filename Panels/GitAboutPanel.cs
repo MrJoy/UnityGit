@@ -20,8 +20,12 @@ public class GitAboutPanel : GitPanel {
       }
     }
   }
-  public override void OnGUI() {
+
+  public override void OnEnable() {
     LoadInfo();
+  }
+
+  public override void OnGUI() {
     GUILayout.Label(gitShellVersion, GitStyles.BoldLabel);
     GUILayout.Label(gitShellCopyright, GitStyles.MiniLabel);
 
