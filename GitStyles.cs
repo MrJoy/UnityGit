@@ -149,4 +149,42 @@ public static class GitStyles {
       return _Link;
     }
   }
+
+  private static GUIStyle _CommandLeft = null;
+  public static GUIStyle CommandLeft {
+    get {
+      if(_CommandLeft == null) {
+        _CommandLeft = new GUIStyle(GUI.skin.GetStyle("CommandLeft")) {
+          fixedWidth = 0,
+          padding = new RectOffset(4,3,0,0)
+        };
+      }
+      return _CommandLeft;
+    }
+  }
+
+  private static GUIStyle _CommandMid = null;
+  public static GUIStyle CommandMid {
+    get {
+      if(_CommandMid == null) {
+        _CommandMid = new GUIStyle(GUI.skin.GetStyle("CommandMid")) {
+          fixedWidth = 0
+        };
+      }
+      return _CommandMid;
+    }
+  }
+
+  private static GUIStyle _CommandRight = null;
+  public static GUIStyle CommandRight {
+    get {
+      if(_CommandRight == null) {
+        _CommandRight = new GUIStyle(GUI.skin.GetStyle("CommandRight")) {
+          fixedWidth = 0,
+          padding = new RectOffset(2,5,0,0)
+        };
+      }
+      return _CommandRight;
+    }
+  }
 }
