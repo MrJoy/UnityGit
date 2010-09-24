@@ -1,7 +1,7 @@
 # OVERVIEW
 
 UnityGit is a very young project aiming to provide some degree of integration 
-between [Git](http://git-scm.com) [Unity](http://unity3d.com).
+between [Git](http://git-scm.com) and [Unity](http://unity3d.com).
 
 At present, it's likely it will only work on MacOS X, and even then full 
 functionality requires some manual effort.
