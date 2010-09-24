@@ -126,8 +126,9 @@ public class GitStatusPanel : GitPanel {
 
         ShowStagedChanges();
       GUILayout.EndVertical();
+      GUILayout.Space(5);
       GUILayout.BeginVertical();
-        GUILayout.Box("Lorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\n", "box", ExpandWidth, ExpandHeight);
+        GUILayout.Box("Lorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\n", GitStyles.FileListBox, ExpandWidth, ExpandHeight);
         // TODO: Make this scrollable, and make it obey editor commands properly.
         commitMessage = GUILayout.TextArea(commitMessage, GUILayout.Height(editorLineHeight * 9 + 2));
         GUILayout.BeginHorizontal();
