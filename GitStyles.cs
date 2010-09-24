@@ -29,4 +29,17 @@ public static class GitStyles {
       return _MiniLabel;
     }
   }
+
+  private static GUIStyle _WhiteLabel = null;
+  public static GUIStyle WhiteLabel {
+    get {
+      if(_WhiteLabel == null) {
+        _WhiteLabel = new GUIStyle(EditorStyles.whiteLabel) {
+          padding = ZeroOffset,
+          margin = ZeroOffset
+        };
+      }
+      return _WhiteLabel;
+    }
+  }
 }

@@ -32,8 +32,8 @@ public class GitAboutPanel : GitPanel {
     GUILayout.Space(10);
     Color c = GUI.color;
     GUI.color = (cantFindGit) ? Color.red : Color.black;
-    GUILayout.Label(gitVersion, EditorStyles.whiteLabel, NoExpandWidth, NoExpandHeight);
-    GUILayout.Label(gitBinary, EditorStyles.whiteLabel, NoExpandWidth, NoExpandHeight);
+    GUILayout.Label(gitVersion, GitStyles.WhiteLabel);
+    GUILayout.Label(gitBinary, GitStyles.WhiteLabel);
     GUI.color = c;
   }
 }
