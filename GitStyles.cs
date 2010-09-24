@@ -35,7 +35,9 @@ public static class GitStyles {
       if(_FileListBox == null) {
         _FileListBox = new GUIStyle("GroupBox") {
           padding = new RectOffset(1,1,1,1),
-          margin = ZeroOffset
+          margin = ZeroOffset,
+          alignment = TextAnchor.UpperLeft,
+          imagePosition = ImagePosition.TextOnly
         };
       }
       return _FileListBox;
@@ -131,6 +133,7 @@ public static class GitStyles {
       return _WhiteLargeLabel;
     }
   }
+
   private static GUIStyle _Link = null;
   public static GUIStyle Link {
     get {
