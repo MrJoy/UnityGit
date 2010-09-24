@@ -55,4 +55,20 @@ public static class GitStyles {
       return _WhiteLabel;
     }
   }
+
+  private static GUIStyle _Link = null;
+  public static GUIStyle Link {
+    get {
+      if(_Link == null) {
+        _Link = new GUIStyle(EditorStyles.whiteLabel) {
+          padding = ZeroOffset,
+          margin = ZeroOffset,
+          normal = new GUIStyleState() {
+            textColor = Color.blue
+          }
+        };
+      }
+      return _Link;
+    }
+  }
 }
