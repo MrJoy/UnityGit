@@ -62,6 +62,8 @@ public class GitShell : EditorWindow {
       GitPanel panel = panels[panelIndex];
       if(panel != null)
         panel.OnGUI();
+      else
+        GUILayout.Label("Not implemented yet.");
     GUILayout.EndVertical();
   }
 
