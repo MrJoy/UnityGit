@@ -105,13 +105,19 @@ public class GitStatusPanel : GitPanel {
   }
 
   private string commitMessage = "";
+  private float editorLineHeight = -1, boldLabelSpaceSize = -1;
   public override void OnGUI() {
+    if(editorLineHeight <= 0) {
+      editorLineHeight = GUI.skin.GetStyle("textarea").CalcHeight(new GUIContent("X"), 100);
+      boldLabelSpaceSize = SizeOfSpace(GitStyles.BoldLabel);
+    }
+
     Color c = GUI.color;
     GUILayout.BeginHorizontal();
       GUILayout.BeginVertical();
         GUILayout.BeginHorizontal();
           GUILayout.Label("Current Branch:", GitStyles.BoldLabel, NoExpandWidth);
-          GUILayout.Space(SizeOfSpace(GitStyles.BoldLabel));
+          GUILayout.Space(boldLabelSpaceSize);
           GUI.color = isDetachedHeadMode ? GitStyles.ErrorColor : GitStyles.TextColor;
           GUILayout.Label(currentBranchLabel, GitStyles.WhiteBoldLabel, NoExpandWidth);
           GUI.color = c;
@@ -125,9 +131,8 @@ public class GitStatusPanel : GitPanel {
       GUILayout.EndVertical();
       GUILayout.BeginVertical();
         GUILayout.Box("Lorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\n", "box", ExpandWidth, ExpandHeight);
-        float height = GUI.skin.GetStyle("textarea").CalcHeight(new GUIContent("X"), 100);
         // TODO: Make this scrollable.
-        commitMessage = EditorGUILayout.TextArea(commitMessage, GUILayout.Height(height * 9 + 2));
+        commitMessage = EditorGUILayout.TextArea(commitMessage, GUILayout.Height(editorLineHeight * 9 + 2));
       GUILayout.EndVertical();
     GUILayout.EndHorizontal();
   }
