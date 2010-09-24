@@ -101,8 +101,9 @@ public class GitStatusPanel : GitPanel {
     EditorGUILayout.EndScrollView();
   }
 
-  private string commitMessage = "";
   private float editorLineHeight = -1, boldLabelSpaceSize = -1;
+  private string commitMessage = "";
+  private bool amendCommit = false;
   public override void OnGUI() {
     if(editorLineHeight <= 0) {
       editorLineHeight = GUI.skin.GetStyle("textarea").CalcHeight(new GUIContent("X"), 100);
@@ -144,6 +145,8 @@ public class GitStatusPanel : GitPanel {
           }
           GUILayout.Button("Commit", GitStyles.CommandMid);
           GUILayout.Button("Push", GitStyles.CommandRight);
+          GUILayout.Space(10);
+          amendCommit = GUILayout.Toggle(amendCommit, "Amend");
         GUILayout.EndHorizontal();
       GUILayout.EndVertical();
     GUILayout.EndHorizontal();
