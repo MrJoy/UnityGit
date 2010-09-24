@@ -87,15 +87,12 @@ public class GitStatusPanel : GitPanel {
 
   private Vector2 indexScrollPos;
   private void ShowStagedChanges() {
-    Color c = GUI.color;
     GUILayout.Label("Staged Changes (Will Commit):", GitStyles.BoldLabel, NoExpandWidth);
     indexScrollPos = EditorGUILayout.BeginScrollView(indexScrollPos, GitStyles.FileListBox);
       if(changes != null) {
         for(int i = 0; i < changes.Length; i++) {
           if(changes[i].indexStatus != GitWrapper.ChangeType.Unmodified && changes[i].indexStatus != GitWrapper.ChangeType.Untracked) {
-            GUI.color = ColorForChangeType(changes[i].indexStatus);
-            GUILayout.Label(changes[i].path, GitStyles.WhiteLargeLabel);
-            GUI.color = c;
+            ShowFile(changes[i].path, changes[i].indexStatus);
           }
         }
       }
