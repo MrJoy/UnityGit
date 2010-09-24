@@ -126,7 +126,7 @@ public class GitStatusPanel : GitPanel {
         ShowStagedChanges();
       GUILayout.EndVertical();
       GUILayout.BeginVertical();
-        GUILayout.Box("....................................XXXXXXXXXXXXXXXXXXXXX.............\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.", "box", ExpandWidth, ExpandHeight);
+        GUILayout.Box("Lorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\n", "box", ExpandWidth, ExpandHeight);
       GUILayout.EndVertical();
     GUILayout.EndHorizontal();
   }
