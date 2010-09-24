@@ -14,6 +14,7 @@ public static class GitStyles {
       return _BoldLabel;
     }
   }
+
   private static GUIStyle _MiniLabel = null;
   public static GUIStyle MiniLabel {
     get {
