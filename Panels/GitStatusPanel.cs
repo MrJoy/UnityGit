@@ -78,10 +78,12 @@ public class GitStatusPanel : GitPanel {
     EditorGUILayout.EndScrollView();
   }
 
-  public override void OnGUI() {
-    if(GUILayout.Button("Refresh"))
+  public override void OnToolbarGUI() {
+    if(GUILayout.Button("Refresh", EditorStyles.toolbarButton, NoExpandWidth))
       Refresh();
+  }
 
+  public override void OnGUI() {
     Color c = GUI.color;
     GUILayout.BeginHorizontal();
       GUILayout.BeginVertical();
