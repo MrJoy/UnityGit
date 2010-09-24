@@ -6,8 +6,8 @@ public abstract class GitPanel {
   public virtual void OnDisable() {}
   public abstract void OnGUI();
 
-  protected static GUILayoutOption ExpandWidth = GUILayout.ExpandWidth(true),
-                                   NoExpandWidth = GUILayout.ExpandWidth(false),
-                                   ExpandHeight = GUILayout.ExpandHeight(true),
-                                   NoExpandHeight = GUILayout.ExpandHeight(false);
+  public static GUILayoutOption ExpandWidth = GUILayout.ExpandWidth(true),
+                                NoExpandWidth = GUILayout.ExpandWidth(false),
+                                ExpandHeight = GUILayout.ExpandHeight(true),
+                                NoExpandHeight = GUILayout.ExpandHeight(false);
 }

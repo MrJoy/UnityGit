@@ -4,6 +4,19 @@ using UnityEditor;
 public static class GitStyles {
   private static RectOffset ZeroOffset = new RectOffset(0,0,0,0);
 
+  private static GUIStyle _Indented = null;
+  public static GUIStyle Indented {
+    get {
+      if(_Indented == null) {
+        _Indented = new GUIStyle() {
+          padding = new RectOffset(4,4,4,4),
+          margin = ZeroOffset
+        };
+      }
+      return _Indented;
+    }
+  }
+
   private static GUIStyle _BoldLabel = null;
   public static GUIStyle BoldLabel {
     get {
