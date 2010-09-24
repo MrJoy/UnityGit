@@ -24,27 +24,61 @@ public class GitStatusPanel : GitPanel {
 
   public override void OnEnable() {
     Refresh();
+    if(BLANK_TEX == null) {
+      BLANK_TEX = new Texture2D(16, 16);
+      BLANK_TEX.hideFlags = HideFlags.HideAndDontSave;
+      Color[] tmp = new Color[16 * 16];
+      for(int i = 0; i < tmp.Length; i++)
+        tmp[i] = Color.clear;
+      BLANK_TEX.SetPixels(tmp);
+      BLANK_TEX.Apply();
+    }
   }
 
   private Vector2 workingScrollPos;
+  private const int ICON_WIDTH = 16, ITEM_HEIGHT = 21;
+  private static Texture2D BLANK_TEX = null;
+
+  private Color ColorForChangeType(GitWrapper.ChangeType status) {
+    Color c = Color.red;
+    switch(status) {
+      case GitWrapper.ChangeType.Modified:  c = GitStyles.ModifiedColor; break;
+      case GitWrapper.ChangeType.Added:     c = GitStyles.AddedColor; break;
+      case GitWrapper.ChangeType.Deleted:   c = GitStyles.DeletedColor; break;
+      case GitWrapper.ChangeType.Renamed:   c = GitStyles.RenamedColor; break;
+      case GitWrapper.ChangeType.Copied:    c = GitStyles.CopiedColor; break;
+      case GitWrapper.ChangeType.Untracked: c = GitStyles.UntrackedColor; break;
+      default: 
+        Debug.Log("Should not have gotten this status: " + status);
+        break;
+    }
+    return c;
+  }
+
+  private void ShowFile(string path, GitWrapper.ChangeType status) {
+    GUILayout.BeginHorizontal();
+      GUIContent tmp = new GUIContent() {
+        image = AssetDatabase.GetCachedIcon(path) ?? BLANK_TEX,
+        text = null
+      };
+      GUILayout.Label(tmp, GUILayout.Width(ICON_WIDTH), GUILayout.Height(ITEM_HEIGHT));
+      Color c = GUI.color;
+      GUI.color = ColorForChangeType(status);
+      GUILayout.BeginVertical(GUILayout.MaxHeight(ITEM_HEIGHT));
+        GUILayout.FlexibleSpace();
+        GUILayout.Label(path, GitStyles.WhiteLargeLabel);
+      GUILayout.EndVertical();
+      GUI.color = c;
+    GUILayout.EndHorizontal();
+  }
+
   private void ShowUnstagedChanges() {
-    Color c = GUI.color;
     GUILayout.Label("Unstaged Changes:", GitStyles.BoldLabel, NoExpandWidth);
     workingScrollPos = EditorGUILayout.BeginScrollView(workingScrollPos, GitStyles.FileListBox);
       if(changes != null) {
         for(int i = 0; i < changes.Length; i++) {
           if(changes[i].workingStatus != GitWrapper.ChangeType.Unmodified) {
-            switch(changes[i].workingStatus) {
-              case GitWrapper.ChangeType.Modified:  GUI.color = GitStyles.ModifiedColor; break;
-              case GitWrapper.ChangeType.Deleted:   GUI.color = GitStyles.DeletedColor; break;
-              case GitWrapper.ChangeType.Untracked: GUI.color = GitStyles.UntrackedColor; break;
-              default: 
-                GUI.color = Color.red;
-                Debug.Log("Should not have gotten this status for working set: " + changes[i].workingStatus);
-                break;
-            }
-            GUILayout.Label(changes[i].path, GitStyles.WhiteLargeLabel);
-            GUI.color = c;
+            ShowFile(changes[i].path, changes[i].workingStatus);
           }
         }
       }
@@ -59,17 +93,7 @@ public class GitStatusPanel : GitPanel {
       if(changes != null) {
         for(int i = 0; i < changes.Length; i++) {
           if(changes[i].indexStatus != GitWrapper.ChangeType.Unmodified && changes[i].indexStatus != GitWrapper.ChangeType.Untracked) {
-            switch(changes[i].indexStatus) {
-              case GitWrapper.ChangeType.Modified:  GUI.color = GitStyles.ModifiedColor; break;
-              case GitWrapper.ChangeType.Added:     GUI.color = GitStyles.AddedColor; break;
-              case GitWrapper.ChangeType.Deleted:   GUI.color = GitStyles.DeletedColor; break;
-              case GitWrapper.ChangeType.Renamed:   GUI.color = GitStyles.RenamedColor; break;
-              case GitWrapper.ChangeType.Copied:    GUI.color = GitStyles.CopiedColor; break;
-              default: 
-                GUI.color = Color.red;
-                Debug.Log("Should not have gotten this status for index set: " + changes[i].indexStatus);
-                break;
-            }
+            GUI.color = ColorForChangeType(changes[i].indexStatus);
             GUILayout.Label(changes[i].path, GitStyles.WhiteLargeLabel);
             GUI.color = c;
           }
