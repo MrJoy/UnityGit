@@ -34,11 +34,36 @@ public static class GitStyles {
     get {
       if(_FileListBox == null) {
         _FileListBox = new GUIStyle("GroupBox") {
-          padding = new RectOffset(4,4,0,4),
+          padding = new RectOffset(1,1,1,1),
           margin = ZeroOffset
         };
       }
       return _FileListBox;
+    }
+  }
+
+  private static GUIStyle _FileLabel = null;
+  public static GUIStyle FileLabel {
+    get {
+      if(_FileLabel == null) {
+        _FileLabel = new GUIStyle(WhiteLargeLabel);
+      }
+      return _FileLabel;
+    }
+  }
+
+  private static GUIStyle _FileLabelSelected = null;
+  public static GUIStyle FileLabelSelected {
+    get {
+      if(_FileLabelSelected == null) {
+        _FileLabelSelected = new GUIStyle(FileLabel) {
+          normal = new GUIStyleState() {
+            background = GUI.skin.GetStyle("ServerUpdateChangesetOn").normal.background,
+            textColor = Color.white
+          }
+        };
+      }
+      return _FileLabelSelected;
     }
   }
 

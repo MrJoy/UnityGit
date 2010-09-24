@@ -55,20 +55,22 @@ public class GitStatusPanel : GitPanel {
     return c;
   }
 
-  private void ShowFile(string path, GitWrapper.ChangeType status) {
+  private void ShowFile(string path, GitWrapper.ChangeType status, bool isSelected) {
+    GUIStyle style = isSelected ? GitStyles.FileLabelSelected : GitStyles.FileLabel;
     GUILayout.BeginHorizontal();
       GUIContent tmp = new GUIContent() {
         image = AssetDatabase.GetCachedIcon(path) ?? BLANK_TEX,
         text = null
       };
-      GUILayout.Label(tmp, GUILayout.Width(ICON_WIDTH), GUILayout.Height(ITEM_HEIGHT));
-      Color c = GUI.color;
-      GUI.color = ColorForChangeType(status);
-      GUILayout.BeginVertical(GUILayout.MaxHeight(ITEM_HEIGHT));
+      GUILayout.Label(tmp, style, GUILayout.Width(ICON_WIDTH), GUILayout.Height(ITEM_HEIGHT));
+      Color c = GUI.contentColor;
+      GUI.contentColor = ColorForChangeType(status);
+      GUILayout.BeginVertical(style, GUILayout.MaxHeight(ITEM_HEIGHT));
         GUILayout.FlexibleSpace();
-        GUILayout.Label(path, GitStyles.WhiteLargeLabel);
+        GUILayout.Label(path, style);
+        GUILayout.Space(3);
       GUILayout.EndVertical();
-      GUI.color = c;
+      GUI.contentColor = c;
     GUILayout.EndHorizontal();
   }
 
@@ -78,7 +80,7 @@ public class GitStatusPanel : GitPanel {
       if(changes != null) {
         for(int i = 0; i < changes.Length; i++) {
           if(changes[i].workingStatus != GitWrapper.ChangeType.Unmodified) {
-            ShowFile(changes[i].path, changes[i].workingStatus);
+            ShowFile(changes[i].path, changes[i].workingStatus, i < 2);
           }
         }
       }
@@ -92,7 +94,7 @@ public class GitStatusPanel : GitPanel {
       if(changes != null) {
         for(int i = 0; i < changes.Length; i++) {
           if(changes[i].indexStatus != GitWrapper.ChangeType.Unmodified && changes[i].indexStatus != GitWrapper.ChangeType.Untracked) {
-            ShowFile(changes[i].path, changes[i].indexStatus);
+            ShowFile(changes[i].path, changes[i].indexStatus, false);
           }
         }
       }
