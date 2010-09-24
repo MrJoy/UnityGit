@@ -142,6 +142,15 @@ public static class GitWrapper {
     }
   }
 
+  public static string ConfigGet(string key) {
+    try {
+      return ShellHelpers.OutputFromCommand("git", "config --get " + key);
+    } catch {
+      _isWorking = false;
+      return null;
+    }
+  }
+
   public static string GitBinary {
     get {
       // TODO: This is OSX-specific.  We should fix that.
