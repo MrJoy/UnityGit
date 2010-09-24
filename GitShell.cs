@@ -31,7 +31,9 @@ public class GitShell : EditorWindow {
 
   public void OnDestroy() { }
 
+  [System.NonSerialized]
   protected int panelIndex = 0;
+  [System.NonSerialized]
   protected GUIContent[] panelLabels = new GUIContent[] {
     new GUIContent("Status"),
     new GUIContent("Commit"),
@@ -40,6 +42,8 @@ public class GitShell : EditorWindow {
     null,
     new GUIContent("About")
   };
+
+  [System.NonSerialized]
   protected GitPanel[] panels = new GitPanel[] {
     null,
     null,
