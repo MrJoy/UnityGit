@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEditor;
 
 public class GitAboutPanel : GitPanel {
+  public override bool IsDisabledForError { get { return false; } }
+
   private GUIContent gitShellVersion = new GUIContent("UnityGit " + GitShell.VERSION);
   private GUIContent gitShellCopyright = new GUIContent("(C)Copyright 2010 MrJoy, Inc.");
   private GUIContent gitShellLink = new GUIContent("http://github.com/MrJoy/UnityGit");
@@ -10,11 +12,9 @@ public class GitAboutPanel : GitPanel {
 
   protected void LoadInfo() {
     if(gitVersion == null) {
-      try {
-        gitVersion = new GUIContent("Git Version: " + ShellHelpers.OutputFromCommand("git", "--version").Replace("git version ", "").Replace("\n", ""));
-        gitBinary = new GUIContent("Git Binary: " + ShellHelpers.OutputFromCommand("which", "git").Replace("\n", ""));
-        cantFindGit = false;
-      } catch {
+      gitVersion = new GUIContent("Git Version: " + GitWrapper.Version);
+      gitBinary = new GUIContent("Git Binary: " + GitWrapper.GitBinary);
+      if(!GitWrapper.IsWorking) {
         gitVersion = new GUIContent("Git Version:");
         gitBinary = new GUIContent("Git Binary: Can't find git binary!");
         cantFindGit = true;

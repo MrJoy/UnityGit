@@ -66,9 +66,16 @@ public class GitShell : EditorWindow {
     GUILayout.EndHorizontal();
     GUILayout.BeginVertical(GitStyles.Indented);
       GitPanel panel = panels[panelIndex];
-      if(panel != null)
-        panel.OnGUI();
-      else
+      if(panel != null) {
+        if(!panel.IsDisabledForError)
+          panel.OnGUI();
+        else {
+          Color c = GUI.color;
+          GUI.color = GitStyles.ErrorColor;
+          GUILayout.Label("Whoops!  Encountered an error in git.  Please see the About tab to ensure git is set up properly!", GitStyles.WhiteBoldLabel);
+          GUI.color = c;
+        }
+      } else
         GUILayout.Label("Not implemented yet.");
     GUILayout.EndVertical();
   }

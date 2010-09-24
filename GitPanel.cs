@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEditor;
 
 public abstract class GitPanel {
+  public virtual bool IsDisabledForError { get { return !GitWrapper.IsWorking; } }
+
   public virtual void OnEnable() {}
   public virtual void OnDisable() {}
   public abstract void OnGUI();
