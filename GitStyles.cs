@@ -8,6 +8,14 @@ public static class GitStyles {
   public static Color ErrorColor = new Color(0.5f, 0f, 0f, 1f);
   public static Color LinkColor = new Color(0f, 0f, 1f, 1f);
 
+  // Change status colors:
+  public static Color ModifiedColor = new Color(0.35f, 0.35f, 0f, 1f);
+  public static Color DeletedColor = new Color(0.5f, 0f, 0f, 1f);
+  public static Color UntrackedColor = new Color(0f, 0f, 0.5f, 1f);
+  public static Color AddedColor = new Color(0f, 0.5f, 0f, 1f);
+  public static Color RenamedColor = new Color(0f, 0.5f, 0.5f, 1f);
+  public static Color CopiedColor = new Color(0.5f, 0f, 0.5f, 1f);
+
   private static GUIStyle _Indented = null;
   public static GUIStyle Indented {
     get {
@@ -18,6 +26,19 @@ public static class GitStyles {
         };
       }
       return _Indented;
+    }
+  }
+
+  private static GUIStyle _FileListBox = null;
+  public static GUIStyle FileListBox {
+    get {
+      if(_FileListBox == null) {
+        _FileListBox = new GUIStyle("GroupBox") {
+          padding = new RectOffset(4,4,4,4),
+          margin = ZeroOffset
+        };
+      }
+      return _FileListBox;
     }
   }
 
@@ -73,6 +94,18 @@ public static class GitStyles {
     }
   }
 
+  private static GUIStyle _WhiteLargeLabel = null;
+  public static GUIStyle WhiteLargeLabel {
+    get {
+      if(_WhiteLargeLabel == null) {
+        _WhiteLargeLabel = new GUIStyle(EditorStyles.whiteLargeLabel) {
+          padding = ZeroOffset,
+          margin = ZeroOffset
+        };
+      }
+      return _WhiteLargeLabel;
+    }
+  }
   private static GUIStyle _Link = null;
   public static GUIStyle Link {
     get {
