@@ -45,7 +45,7 @@ public class GitShell : EditorWindow {
 
   [System.NonSerialized]
   protected GitPanel[] panels = new GitPanel[] {
-    null,
+    new GitStatusPanel(),
     null,
     null,
     null,
