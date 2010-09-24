@@ -17,7 +17,7 @@ public static class GitWrapper {
   public static string Version {
     get {
       try {
-        return ShellHelpers.OutputFromCommand("git", "--version").Replace("git version ", "").Replace("\n", "");
+        return ShellHelpers.OutputFromCommand("git", "--version").Replace("git version ", "");
       } catch {
         _isWorking = false;
         return null;
@@ -25,11 +25,26 @@ public static class GitWrapper {
     }
   }
 
+  public struct Change {
+    string path;
+  }
+
+  public static Change[] Status {
+    get {
+      try {
+        string tmp = ShellHelpers.OutputFromCommand("git", "status --porcelain");
+      } catch {
+        
+      }
+      return null;
+    }
+  }
+
   public static string GitBinary {
     get {
       // TODO: This is OSX-specific.  We should fix that.
       try {
-        return ShellHelpers.OutputFromCommand("which", "git").Replace("\n", "");
+        return ShellHelpers.OutputFromCommand("which", "git");
       } catch {
         _isWorking = false;
         return null;

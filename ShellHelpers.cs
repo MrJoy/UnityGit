@@ -21,6 +21,8 @@ public class ShellHelpers {
     var p = StartProcess(filename, arguments);
     var output = p.StandardOutput.ReadToEnd();
     p.WaitForExit();
+    if(output.EndsWith("\n"))
+      output = output.Substring(0, output.Length - 1);
     return output;
   }
 }
