@@ -35,8 +35,8 @@ public class GitShell : EditorWindow {
   protected int panelIndex = 0;
   [System.NonSerialized]
   protected GUIContent[] panelLabels = new GUIContent[] {
-    new GUIContent("Status"),
     new GUIContent("Commit"),
+    new GUIContent("Branch/Merge"),
     new GUIContent("Remote"),
     new GUIContent("History"),
     null,
