@@ -26,7 +26,58 @@ public class GitStatusPanel : GitPanel {
     Refresh();
   }
 
-  private Vector2 workingScrollPos, indexScrollPos;
+  private Vector2 workingScrollPos;
+  private void ShowUnstagedChanges() {
+    Color c = GUI.color;
+    GUILayout.Label("Unstaged Changes:", GitStyles.BoldLabel, NoExpandWidth);
+    workingScrollPos = EditorGUILayout.BeginScrollView(workingScrollPos, GitStyles.FileListBox);
+      if(changes != null) {
+        for(int i = 0; i < changes.Length; i++) {
+          if(changes[i].workingStatus != GitWrapper.ChangeType.Unmodified) {
+            switch(changes[i].workingStatus) {
+              case GitWrapper.ChangeType.Modified:  GUI.color = GitStyles.ModifiedColor; break;
+              case GitWrapper.ChangeType.Deleted:   GUI.color = GitStyles.DeletedColor; break;
+              case GitWrapper.ChangeType.Untracked: GUI.color = GitStyles.UntrackedColor; break;
+              default: 
+                GUI.color = Color.red;
+                Debug.Log("Should not have gotten this status for working set: " + changes[i].workingStatus);
+                break;
+            }
+            GUILayout.Label(changes[i].path, GitStyles.WhiteLargeLabel);
+            GUI.color = c;
+          }
+        }
+      }
+    EditorGUILayout.EndScrollView();
+  }
+
+  private Vector2 indexScrollPos;
+  private void ShowStagedChanges() {
+    Color c = GUI.color;
+    GUILayout.Label("Staged Changes (Will Commit):", GitStyles.BoldLabel, NoExpandWidth);
+    indexScrollPos = EditorGUILayout.BeginScrollView(indexScrollPos, GitStyles.FileListBox);
+      if(changes != null) {
+        for(int i = 0; i < changes.Length; i++) {
+          if(changes[i].indexStatus != GitWrapper.ChangeType.Unmodified && changes[i].indexStatus != GitWrapper.ChangeType.Untracked) {
+            switch(changes[i].indexStatus) {
+              case GitWrapper.ChangeType.Modified:  GUI.color = GitStyles.ModifiedColor; break;
+              case GitWrapper.ChangeType.Added:     GUI.color = GitStyles.AddedColor; break;
+              case GitWrapper.ChangeType.Deleted:   GUI.color = GitStyles.DeletedColor; break;
+              case GitWrapper.ChangeType.Renamed:   GUI.color = GitStyles.RenamedColor; break;
+              case GitWrapper.ChangeType.Copied:    GUI.color = GitStyles.CopiedColor; break;
+              default: 
+                GUI.color = Color.red;
+                Debug.Log("Should not have gotten this status for index set: " + changes[i].indexStatus);
+                break;
+            }
+            GUILayout.Label(changes[i].path, GitStyles.WhiteLargeLabel);
+            GUI.color = c;
+          }
+        }
+      }
+    EditorGUILayout.EndScrollView();
+  }
+
   public override void OnGUI() {
     if(GUILayout.Button("Refresh"))
       Refresh();
@@ -43,50 +94,10 @@ public class GitStatusPanel : GitPanel {
         GUILayout.EndHorizontal();
         EditorGUILayout.Separator();
 
-        GUILayout.Label("Unstaged Changes:", GitStyles.BoldLabel, NoExpandWidth);
-        workingScrollPos = EditorGUILayout.BeginScrollView(workingScrollPos, GitStyles.FileListBox);
-          if(changes != null) {
-            for(int i = 0; i < changes.Length; i++) {
-              if(changes[i].workingStatus != GitWrapper.ChangeType.Unmodified) {
-                switch(changes[i].workingStatus) {
-                  case GitWrapper.ChangeType.Modified:  GUI.color = GitStyles.ModifiedColor; break;
-                  case GitWrapper.ChangeType.Deleted:   GUI.color = GitStyles.DeletedColor; break;
-                  case GitWrapper.ChangeType.Untracked: GUI.color = GitStyles.UntrackedColor; break;
-                  default: 
-                    GUI.color = Color.red;
-                    Debug.Log("Should not have gotten this status for working set: " + changes[i].workingStatus);
-                    break;
-                }
-                GUILayout.Label(changes[i].path, GitStyles.WhiteLargeLabel);
-                GUI.color = c;
-              }
-            }
-          }
-        EditorGUILayout.EndScrollView();
+        ShowUnstagedChanges();
         EditorGUILayout.Separator();
 
-        GUILayout.Label("Staged Changes (Will Commit):", GitStyles.BoldLabel, NoExpandWidth);
-        indexScrollPos = EditorGUILayout.BeginScrollView(indexScrollPos, GitStyles.FileListBox);
-          if(changes != null) {
-            for(int i = 0; i < changes.Length; i++) {
-              if(changes[i].indexStatus != GitWrapper.ChangeType.Unmodified && changes[i].indexStatus != GitWrapper.ChangeType.Untracked) {
-                switch(changes[i].indexStatus) {
-                  case GitWrapper.ChangeType.Modified:  GUI.color = GitStyles.ModifiedColor; break;
-                  case GitWrapper.ChangeType.Added:     GUI.color = GitStyles.AddedColor; break;
-                  case GitWrapper.ChangeType.Deleted:   GUI.color = GitStyles.DeletedColor; break;
-                  case GitWrapper.ChangeType.Renamed:   GUI.color = GitStyles.RenamedColor; break;
-                  case GitWrapper.ChangeType.Copied:    GUI.color = GitStyles.CopiedColor; break;
-                  default: 
-                    GUI.color = Color.red;
-                    Debug.Log("Should not have gotten this status for index set: " + changes[i].indexStatus);
-                    break;
-                }
-                GUILayout.Label(changes[i].path, GitStyles.WhiteLargeLabel);
-                GUI.color = c;
-              }
-            }
-          }
-        EditorGUILayout.EndScrollView();
+        ShowStagedChanges();
       GUILayout.EndVertical();
       GUILayout.BeginVertical();
         GUILayout.Box("....................................XXXXXXXXXXXXXXXXXXXXX.............\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.", "box", ExpandWidth, ExpandHeight);
