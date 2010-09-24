@@ -36,10 +36,12 @@ public class GitShell : EditorWindow {
     new GUIContent("Status"),
     new GUIContent("Commit"),
     new GUIContent("Remote"),
+    new GUIContent("History"),
     null,
     new GUIContent("About")
   };
   protected GitPanel[] panels = new GitPanel[] {
+    null,
     null,
     null,
     null,
