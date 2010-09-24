@@ -29,7 +29,8 @@ public class GitAboutPanel : GitPanel {
     GUILayout.Label(gitShellVersion, GitStyles.BoldLabel);
     GUILayout.Label(gitShellCopyright, GitStyles.MiniLabel);
 
-    GUILayout.Space(10);
+    EditorGUILayout.Separator();
+
     Color c = GUI.color;
     GUI.color = (cantFindGit) ? Color.red : Color.black;
     GUILayout.Label(gitVersion, GitStyles.WhiteLabel);
