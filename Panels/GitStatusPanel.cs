@@ -101,11 +101,6 @@ public class GitStatusPanel : GitPanel {
     EditorGUILayout.EndScrollView();
   }
 
-  public override void OnToolbarGUI() {
-    if(GUILayout.Button("Refresh", EditorStyles.toolbarButton, NoExpandWidth))
-      Refresh();
-  }
-
   private string commitMessage = "";
   private float editorLineHeight = -1, boldLabelSpaceSize = -1;
   public override void OnGUI() {
@@ -133,8 +128,22 @@ public class GitStatusPanel : GitPanel {
       GUILayout.EndVertical();
       GUILayout.BeginVertical();
         GUILayout.Box("Lorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\n", "box", ExpandWidth, ExpandHeight);
-        // TODO: Make this scrollable.
-        commitMessage = EditorGUILayout.TextArea(commitMessage, GUILayout.Height(editorLineHeight * 9 + 2));
+        // TODO: Make this scrollable, and make it obey editor commands properly.
+        commitMessage = GUILayout.TextArea(commitMessage, GUILayout.Height(editorLineHeight * 9 + 2));
+        GUILayout.BeginHorizontal();
+          if(GUILayout.Button("Refresh", GitStyles.CommandLeft)) {
+            Refresh();
+          }
+          GUILayout.Button("Stage Changed", GitStyles.CommandMid);
+          if(GUILayout.Button("Sign Off", GitStyles.CommandMid)) {
+            string signOffMessage = "Signed-off-by: " + GitWrapper.ConfigGet("user.name") + " <" + GitWrapper.ConfigGet("user.email") + ">";
+            if(!commitMessage.EndsWith(signOffMessage)) {
+              commitMessage += "\n" + signOffMessage;
+            }
+          }
+          GUILayout.Button("Commit", GitStyles.CommandMid);
+          GUILayout.Button("Push", GitStyles.CommandRight);
+        GUILayout.EndHorizontal();
       GUILayout.EndVertical();
     GUILayout.EndHorizontal();
   }
