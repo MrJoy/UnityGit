@@ -4,6 +4,7 @@ using UnityEditor;
 public class GitAboutPanel : GitPanel {
   private GUIContent gitShellVersion = new GUIContent("UnityGit " + GitShell.VERSION);
   private GUIContent gitShellCopyright = new GUIContent("(C)Copyright 2010 MrJoy, Inc.");
+  private GUIContent gitShellLink = new GUIContent("http://github.com/MrJoy/UnityGit");
   private GUIContent gitVersion = null, gitBinary = null;
   private bool cantFindGit = false;
 
@@ -28,6 +29,7 @@ public class GitAboutPanel : GitPanel {
   public override void OnGUI() {
     GUILayout.Label(gitShellVersion, GitStyles.BoldLabel);
     GUILayout.Label(gitShellCopyright, GitStyles.MiniLabel);
+    LinkTo(gitShellLink, gitShellLink.text);
 
     EditorGUILayout.Separator();
 
