@@ -17,4 +17,13 @@ public abstract class GitPanel {
       Application.OpenURL(url);
     }
   }
+
+  private static GUIContent DUMMY_WITH_SPACE = new GUIContent(" .");
+  private static GUIContent DUMMY_WITHOUT_SPACE = new GUIContent(".");
+
+  public static float SizeOfSpace(GUIStyle style) {
+    float x1 = style.CalcSize(DUMMY_WITH_SPACE).x;
+    float x2 = style.CalcSize(DUMMY_WITHOUT_SPACE).x;
+    return x1 - x2;
+  }
 }

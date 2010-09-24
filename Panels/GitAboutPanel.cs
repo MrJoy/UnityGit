@@ -34,7 +34,7 @@ public class GitAboutPanel : GitPanel {
     EditorGUILayout.Separator();
 
     Color c = GUI.color;
-    GUI.color = (cantFindGit) ? Color.red : Color.black;
+    GUI.color = (cantFindGit) ? GitStyles.ErrorColor : GitStyles.TextColor;
     GUILayout.Label(gitVersion, GitStyles.WhiteLabel);
     GUILayout.Label(gitBinary, GitStyles.WhiteLabel);
     GUI.color = c;

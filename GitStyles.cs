@@ -4,6 +4,10 @@ using UnityEditor;
 public static class GitStyles {
   private static RectOffset ZeroOffset = new RectOffset(0,0,0,0);
 
+  public static Color TextColor = new Color(0f, 0f, 0f, 1f);
+  public static Color ErrorColor = new Color(0.5f, 0f, 0f, 1f);
+  public static Color LinkColor = new Color(0f, 0f, 1f, 1f);
+
   private static GUIStyle _Indented = null;
   public static GUIStyle Indented {
     get {
@@ -56,6 +60,19 @@ public static class GitStyles {
     }
   }
 
+  private static GUIStyle _WhiteBoldLabel = null;
+  public static GUIStyle WhiteBoldLabel {
+    get {
+      if(_WhiteBoldLabel == null) {
+        _WhiteBoldLabel = new GUIStyle(EditorStyles.whiteBoldLabel) {
+          padding = ZeroOffset,
+          margin = ZeroOffset
+        };
+      }
+      return _WhiteBoldLabel;
+    }
+  }
+
   private static GUIStyle _Link = null;
   public static GUIStyle Link {
     get {
@@ -64,7 +81,7 @@ public static class GitStyles {
           padding = ZeroOffset,
           margin = ZeroOffset,
           normal = new GUIStyleState() {
-            textColor = Color.blue
+            textColor = GitStyles.LinkColor
           }
         };
       }
