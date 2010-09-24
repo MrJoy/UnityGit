@@ -34,7 +34,7 @@ public static class GitStyles {
     get {
       if(_FileListBox == null) {
         _FileListBox = new GUIStyle("GroupBox") {
-          padding = new RectOffset(4,4,4,4),
+          padding = new RectOffset(4,4,0,4),
           margin = ZeroOffset
         };
       }
