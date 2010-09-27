@@ -96,8 +96,9 @@ public class GitShell : EditorWindow {
           GUILayout.Label("Whoops!  Encountered an error in git.  Please see the About tab to ensure git is set up properly!", GitStyles.WhiteBoldLabel);
           GUI.color = c;
         }
-      } else
+      } else {
         GUILayout.Label("Not implemented yet.");
+      }
     GUILayout.EndVertical();
   }
 
