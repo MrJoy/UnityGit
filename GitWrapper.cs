@@ -39,6 +39,7 @@ public static class GitWrapper {
   }
 
   public struct Change {
+    // TODO: Make this identify merge conflicts.
     public ChangeType indexStatus, workingStatus;
     public string path;
   }
