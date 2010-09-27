@@ -195,10 +195,8 @@ public class GitStatusPanel : GitPanel {
   // Sub-views.
   private Hashtable workingSetSelectionCache = new Hashtable();  
   private Vector2 workingScrollPos;
-  protected void ShowUnstagedChanges(float height) {
-    GUILayout.BeginVertical(GUILayout.Height(height));
-      workingScrollPos = FileListView(UNSTAGED_CHANGES_LABEL, workingScrollPos, WorkingSetFilter, WorkingSetFetcher, StagePath, workingSetSelectionCache);
-    GUILayout.EndVertical();
+  protected void ShowUnstagedChanges() {
+    workingScrollPos = FileListView(UNSTAGED_CHANGES_LABEL, workingScrollPos, WorkingSetFilter, WorkingSetFetcher, StagePath, workingSetSelectionCache);
   }
 
   private Hashtable indexSetSelectionCache = new Hashtable();
@@ -233,10 +231,6 @@ public class GitStatusPanel : GitPanel {
     GUILayout.Box(TMP_DUMMY_DIFF, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
   }
 
-  private bool isDraggingSplitter = false;
-  private float unstagedChangesPanelHeight = -1, lastAvailableHeight = -1;
-  private const float MIN_PANEL_HEIGHT = 75, SPLITTER_HEIGHT = 10;
-  private static GUILayoutOption SplitterHeight = GUILayout.Height(SPLITTER_HEIGHT);
   public override void OnGUI() {
     Init();
 
@@ -252,51 +246,11 @@ public class GitStatusPanel : GitPanel {
         GUILayout.EndHorizontal();
         Space();
 
-        Rect totalArea = EditorGUILayout.BeginVertical();
-          float availableHeight = totalArea.height - SPLITTER_HEIGHT;
-          bool isPanelHeightChanged = false;
-          if(totalArea.height > 0) {
-            if(unstagedChangesPanelHeight < 0) {
-              unstagedChangesPanelHeight = availableHeight * 0.5f;
-              isPanelHeightChanged = true;
-            }
-            if(lastAvailableHeight < 0)
-              lastAvailableHeight = availableHeight;
-            if(lastAvailableHeight != availableHeight) {
-              unstagedChangesPanelHeight = availableHeight * (unstagedChangesPanelHeight / lastAvailableHeight);
-              isPanelHeightChanged = true;
-            }
-            lastAvailableHeight = availableHeight;
-          }
-
-          ShowUnstagedChanges(unstagedChangesPanelHeight);
-
-          float availableHeightForOnePanel = availableHeight - (SPLITTER_HEIGHT + MIN_PANEL_HEIGHT);
-          Rect splitterArea = GUILayoutUtility.GetRect(NoContent, GUI.skin.box, SplitterHeight, ExpandWidth);
-          if(splitterArea.Contains(Event.current.mousePosition) || isDraggingSplitter) {
-            switch(Event.current.type) {
-              case EventType.MouseDown:
-                isDraggingSplitter = true;
-                break;
-              case EventType.MouseDrag:
-                unstagedChangesPanelHeight += Event.current.delta.y;
-                isPanelHeightChanged = true;
-                break;
-              case EventType.MouseUp:
-                isDraggingSplitter = false;
-                break;
-            }
-          }
-          if(isPanelHeightChanged) {
-            if(unstagedChangesPanelHeight < MIN_PANEL_HEIGHT) unstagedChangesPanelHeight = MIN_PANEL_HEIGHT;
-            if(unstagedChangesPanelHeight >= availableHeightForOnePanel) unstagedChangesPanelHeight = availableHeightForOnePanel;
-            Shell.Repaint();
-          }
-//        GUI.Label(splitterArea, NoContent, GUI.skin.box);
-//        EditorGUIUtility.AddCursorRect(splitterArea, MouseCursor.ResizeVertical);
-
+        BeginVerticalPanes();
+          ShowUnstagedChanges();
+        if(VerticalSplitter()) Shell.Repaint();
           ShowStagedChanges();
-        EditorGUILayout.EndVertical();
+        EndVerticalPanes();
       GUILayout.EndVertical();
       Space();
       GUILayout.BeginVertical();
