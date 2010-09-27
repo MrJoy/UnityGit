@@ -18,7 +18,9 @@ public class GitStatusPanel : GitPanel {
 
   // Static helper data.
   private static GUIContent DUMMY_CONTENT = new GUIContent("X");
-  private const int ICON_WIDTH = 16, ITEM_HEIGHT = 21;
+  private static GUILayoutOption ICON_WIDTH = GUILayout.Width(16), 
+                                 ITEM_HEIGHT = GUILayout.Height(21), 
+                                 MAX_ITEM_HEIGHT = GUILayout.MaxHeight(21);
   private static Texture2D BLANK_TEX = null;
 
 
@@ -105,14 +107,15 @@ public class GitStatusPanel : GitPanel {
         iconCache[path] = tmp;
       }
       tmp = (GUIContent)iconCache[path];
-      GUILayout.Label(tmp, style, GUILayout.Width(ICON_WIDTH), GUILayout.Height(ITEM_HEIGHT));
+      if(GUILayout.Button(tmp, style, ICON_WIDTH, ITEM_HEIGHT)) {
+      }
       Color c = GUI.contentColor;
       GUI.contentColor = ColorForChangeType(status);
-      GUILayout.BeginVertical(style, GUILayout.MaxHeight(ITEM_HEIGHT));
+      Rect r = EditorGUILayout.BeginVertical(style, MAX_ITEM_HEIGHT);
         GUILayout.FlexibleSpace();
         GUILayout.Label(path, style);
         GUILayout.Space(3);
-      GUILayout.EndVertical();
+      EditorGUILayout.EndVertical();
       GUI.contentColor = c;
     GUILayout.EndHorizontal();
   }
