@@ -39,4 +39,7 @@ public class GitAboutPanel : GitPanel {
     GUILayout.Label(gitBinary, GitStyles.WhiteLabel);
     GUI.color = c;
   }
+
+  // Base constructor
+  public GitAboutPanel(GitShell owner) : base(owner) {}
 }

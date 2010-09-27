@@ -44,14 +44,18 @@ public class GitShell : EditorWindow {
   };
 
   [System.NonSerialized]
-  protected GitPanel[] panels = new GitPanel[] {
-    new GitStatusPanel(),
-    null,
-    null,
-    null,
-    null,
-    new GitAboutPanel()
-  };
+  protected GitPanel[] panels = null;
+  public GitShell() {
+    // Need to do this here to enable "this" reference.
+    panels = new GitPanel[] {
+      new GitStatusPanel(this),
+      null,
+      null,
+      null,
+      null,
+      new GitAboutPanel(this)
+    };
+  }
 
   public void OnGUI() {
     GitPanel panel;

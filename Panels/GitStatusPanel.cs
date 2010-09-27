@@ -199,4 +199,7 @@ public class GitStatusPanel : GitPanel {
       GUILayout.EndVertical();
     GUILayout.EndHorizontal();
   }
+
+  // Base constructor
+  public GitStatusPanel(GitShell owner) : base(owner) {}
 }
