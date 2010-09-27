@@ -127,10 +127,9 @@ public class GitStatusPanel : GitPanel {
         GUILayout.Label(path, style);
         GUILayout.Space(3);
       EditorGUILayout.EndVertical();
-      if(r.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown) {
+      if(GUI.Button(r, GUIContent.none, GUIStyle.none)) {
         isSelected = !isSelected;
         selectionCache[path] = isSelected;
-        Shell.Repaint();
       }
       GUI.contentColor = c;
     GUILayout.EndHorizontal();
