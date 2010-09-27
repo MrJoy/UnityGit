@@ -16,6 +16,10 @@ public static class GitStyles {
   public static Color RenamedColor = new Color(0f, 0.5f, 0.5f, 1f);
   public static Color CopiedColor = new Color(0.5f, 0f, 0.5f, 1f);
 
+  // Ref colors:
+  public static Color CurrentBranchColor = new Color(0f, 0.5f, 0f, 1f);
+  public static Color BranchColor = new Color(0f, 0f, 0f, 1f);
+
   private static GUIStyle _Indented = null;
   public static GUIStyle Indented {
     get {

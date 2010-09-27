@@ -46,6 +46,7 @@ public class GitShell : EditorWindow {
     new GUIContent("Branch/Merge"),
     new GUIContent("Remote"),
     new GUIContent("History"),
+    new GUIContent("Refs"),
     null,
     new GUIContent("About")
   };
@@ -59,6 +60,7 @@ public class GitShell : EditorWindow {
       null,
       null,
       null,
+      new GitRefsPanel(this),
       null,
       new GitAboutPanel(this)
     };
