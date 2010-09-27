@@ -108,6 +108,7 @@ public class GitStatusPanel : GitPanel {
   [System.NonSerialized]
   private Hashtable iconCache = new Hashtable();
   protected bool ShowFile(Hashtable selectionCache, string path, GitWrapper.ChangeType status) {
+    bool isChanged = false;
     bool isSelected = selectionCache.ContainsKey(path) ? (bool)selectionCache[path] : false;
     GUIStyle style = isSelected ? GitStyles.FileLabelSelected : GitStyles.FileLabel;
 
@@ -124,6 +125,7 @@ public class GitStatusPanel : GitPanel {
       }
       tmp = (GUIContent)iconCache[path];
       if(GUILayout.Button(tmp, style, ICON_WIDTH, ITEM_HEIGHT)) {
+        isChanged = true;
         StagePath(path);
         if(selectionCache.ContainsKey(path))
           selectionCache.Remove(path);
@@ -136,43 +138,67 @@ public class GitStatusPanel : GitPanel {
         GUILayout.Space(3);
       EditorGUILayout.EndVertical();
       if(GUI.Button(r, GUIContent.none, GUIStyle.none)) {
+        isChanged = true;
         isSelected = !isSelected;
         selectionCache[path] = isSelected;
       }
       GUI.contentColor = c;
     GUILayout.EndHorizontal();
+    return isChanged;
   }
 
+  protected delegate bool FilterDelegate(GitWrapper.Change change);
+  protected delegate GitWrapper.ChangeType ChangeTypeDelegate(GitWrapper.Change change);
+
+  protected Vector2 FileListView(GUIContent label, Vector2 scrollPos, FilterDelegate filter, ChangeTypeDelegate changeTypeFetcher, Hashtable selectionCache) {
+    GUILayout.Label(label, GitStyles.BoldLabel, NoExpandWidth);
+    int id = GUIUtility.GetControlID(FocusType.Passive);
+    bool isChanged = false;
+    scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GitStyles.FileListBox);
+      if(changes != null) {
+        for(int i = 0; i < changes.Length; i++) {
+          if(filter(changes[i])) {
+            isChanged = isChanged || ShowFile(selectionCache, changes[i].path, changeTypeFetcher(changes[i]));
+          }
+        }
+      }
+    EditorGUILayout.EndScrollView();
+    Rect r = GUILayoutUtility.GetLastRect();
+    isChanged = isChanged || ((Event.current.type == EventType.MouseDown) && r.Contains(Event.current.mousePosition));
+    if(isChanged && (GUIUtility.hotControl != id)) {
+      Debug.Log("Focusing on " + id);
+      GUIUtility.hotControl = id;
+    }
+    return scrollPos;
+  }
+
+  protected bool WorkingSetFilter(GitWrapper.Change change) {
+    return change.workingStatus != GitWrapper.ChangeType.Unmodified;
+  }
+
+  protected bool IndexSetFilter(GitWrapper.Change change) {
+    return change.indexStatus != GitWrapper.ChangeType.Unmodified && change.indexStatus != GitWrapper.ChangeType.Untracked;
+  }
+
+  protected GitWrapper.ChangeType WorkingSetFetcher(GitWrapper.Change change) {
+    return change.workingStatus;
+  }
+
+  protected GitWrapper.ChangeType IndexSetFetcher(GitWrapper.Change change) {
+    return change.indexStatus;
+  }
 
   // Sub-views.
   private Hashtable workingSetSelectionCache = new Hashtable();  
   private Vector2 workingScrollPos;
-  private void ShowUnstagedChanges() {
-    GUILayout.Label(UNSTAGED_CHANGES_LABEL, GitStyles.BoldLabel, NoExpandWidth);
-    workingScrollPos = EditorGUILayout.BeginScrollView(workingScrollPos, GitStyles.FileListBox);
-      if(changes != null) {
-        for(int i = 0; i < changes.Length; i++) {
-          if(changes[i].workingStatus != GitWrapper.ChangeType.Unmodified) {
-            ShowFile(workingSetSelectionCache, changes[i].path, changes[i].workingStatus);
-          }
-        }
-      }
-    EditorGUILayout.EndScrollView();
+  protected void ShowUnstagedChanges() {
+    workingScrollPos = FileListView(UNSTAGED_CHANGES_LABEL, workingScrollPos, WorkingSetFilter, WorkingSetFetcher, workingSetSelectionCache);
   }
 
   private Hashtable indexSetSelectionCache = new Hashtable();
   private Vector2 indexScrollPos;
-  private void ShowStagedChanges() {
-    GUILayout.Label(STAGED_CHANGES_LABEL, GitStyles.BoldLabel, NoExpandWidth);
-    indexScrollPos = EditorGUILayout.BeginScrollView(indexScrollPos, GitStyles.FileListBox);
-      if(changes != null) {
-        for(int i = 0; i < changes.Length; i++) {
-          if(changes[i].indexStatus != GitWrapper.ChangeType.Unmodified && changes[i].indexStatus != GitWrapper.ChangeType.Untracked) {
-            ShowFile(indexSetSelectionCache, changes[i].path, changes[i].indexStatus);
-          }
-        }
-      }
-    EditorGUILayout.EndScrollView();
+  protected void ShowStagedChanges() {
+    indexScrollPos = FileListView(STAGED_CHANGES_LABEL, indexScrollPos, IndexSetFilter, IndexSetFetcher, indexSetSelectionCache);
   }
 
   private float editorLineHeight = -1, boldLabelSpaceSize = -1;
