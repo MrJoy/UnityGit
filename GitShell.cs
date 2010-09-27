@@ -44,7 +44,7 @@ public class GitShell : EditorWindow {
   protected GUIContent[] panelLabels = new GUIContent[] {
     new GUIContent("Commit"),
     new GUIContent("Branch/Merge"),
-    new GUIContent("Remote"),
+    new GUIContent("Remotes"),
     new GUIContent("History"),
     new GUIContent("Refs"),
     null,
