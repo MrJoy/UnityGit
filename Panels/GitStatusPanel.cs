@@ -252,7 +252,6 @@ public class GitStatusPanel : GitPanel {
 
     Color c = GUI.color;
     BeginHorizontalPanes(overallConfiguration);
-//    GUILayout.BeginHorizontal(NoExpandHeight);
       GUILayout.BeginVertical();
         GUILayout.BeginHorizontal();
           GUILayout.Label(CURRENT_BRANCH_LABEL, GitStyles.BoldLabel, NoExpandWidth);
@@ -270,7 +269,6 @@ public class GitStatusPanel : GitPanel {
         EndVerticalPanes();
       GUILayout.EndVertical();
     if(HorizontalSplitter()) Shell.Repaint();
-//      Space();
       GUILayout.BeginVertical();
         BeginVerticalPanes(commitAndDiffConfiguration);
           ShowDiffView();
@@ -278,7 +276,6 @@ public class GitStatusPanel : GitPanel {
           ShowCommitMessageEditor();
         EndVerticalPanes();
       GUILayout.EndVertical();
-//    GUILayout.EndHorizontal();
     EndHorizontalPanes();
   }
 
