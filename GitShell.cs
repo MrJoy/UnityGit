@@ -14,6 +14,7 @@ using System.Collections.Generic;
 
 public class GitShell : EditorWindow {
   public const string VERSION = "0.0.1";
+  public const string COPYRIGHT = "(C)Copyright 2010 MrJoy, Inc.";
 
   public void OnEnable() {
     foreach(GitPanel panel in panels)
