@@ -60,7 +60,7 @@ public static class GitStyles {
       if(_FileLabelSelected == null) {
         _FileLabelSelected = new GUIStyle(FileLabel) {
           normal = new GUIStyleState() {
-            background = GUI.skin.GetStyle("ServerUpdateChangesetOn").normal.background,
+            background = GUI.skin.GetStyle("PR Label").onHover.background,
             textColor = Color.white
           }
         };
@@ -69,6 +69,20 @@ public static class GitStyles {
     }
   }
 
+  private static GUIStyle _FileLabelSelectedUnfocused = null;
+  public static GUIStyle FileLabelSelectedUnfocused {
+    get {
+      if(_FileLabelSelectedUnfocused == null) {
+        _FileLabelSelectedUnfocused = new GUIStyle(FileLabelSelected) {
+          normal = new GUIStyleState() {
+            background = GUI.skin.GetStyle("PR Label").onNormal.background,
+            textColor = Color.white
+          }
+        };
+      }
+      return _FileLabelSelectedUnfocused;
+    }
+  }
   private static GUIStyle _BoldLabel = null;
   public static GUIStyle BoldLabel {
     get {

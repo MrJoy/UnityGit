@@ -107,10 +107,16 @@ public class GitStatusPanel : GitPanel {
 
   [System.NonSerialized]
   private Hashtable iconCache = new Hashtable();
-  protected bool ShowFile(Hashtable selectionCache, string path, GitWrapper.ChangeType status) {
+  protected bool ShowFile(int id, Hashtable selectionCache, string path, GitWrapper.ChangeType status) {
     bool isChanged = false;
     bool isSelected = selectionCache.ContainsKey(path) ? (bool)selectionCache[path] : false;
-    GUIStyle style = isSelected ? GitStyles.FileLabelSelected : GitStyles.FileLabel;
+    // TODO: This is a VERY ugly hack to not "lose" focus when we click a button
+    // TODO: in here due to the button stealing the focus from our list view.
+    // TODO: Strictly speaking we don't know which widget is being clicked but 
+    // TODO: I'm operating under the assumption that that's a moot issue since
+    // TODO: the list view 
+    bool hasFocus = (GUIUtility.hotControl == id) || (Event.current.button == 0);
+    GUIStyle style = isSelected ? (hasFocus ? GitStyles.FileLabelSelected : GitStyles.FileLabelSelectedUnfocused) : GitStyles.FileLabel;
 
     GUILayout.BeginHorizontal();
       GUIContent tmp = null;
@@ -141,6 +147,7 @@ public class GitStatusPanel : GitPanel {
         isChanged = true;
         isSelected = !isSelected;
         selectionCache[path] = isSelected;
+        GUIUtility.hotControl = id;
       }
       GUI.contentColor = c;
     GUILayout.EndHorizontal();
@@ -153,19 +160,20 @@ public class GitStatusPanel : GitPanel {
   protected Vector2 FileListView(GUIContent label, Vector2 scrollPos, FilterDelegate filter, ChangeTypeDelegate changeTypeFetcher, Hashtable selectionCache) {
     GUILayout.Label(label, GitStyles.BoldLabel, NoExpandWidth);
     int id = GUIUtility.GetControlID(FocusType.Passive);
+    bool hasFocus = GUIUtility.hotControl == id;
     bool isChanged = false;
     scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GitStyles.FileListBox);
       if(changes != null) {
         for(int i = 0; i < changes.Length; i++) {
           if(filter(changes[i])) {
-            isChanged = isChanged || ShowFile(selectionCache, changes[i].path, changeTypeFetcher(changes[i]));
+            isChanged = isChanged || ShowFile(id, selectionCache, changes[i].path, changeTypeFetcher(changes[i]));
           }
         }
       }
     EditorGUILayout.EndScrollView();
     Rect r = GUILayoutUtility.GetLastRect();
     isChanged = isChanged || ((Event.current.type == EventType.MouseDown) && r.Contains(Event.current.mousePosition));
-    if(isChanged && (GUIUtility.hotControl != id)) {
+    if(isChanged && !hasFocus) {
       Debug.Log("Focusing on " + id);
       GUIUtility.hotControl = id;
     }
