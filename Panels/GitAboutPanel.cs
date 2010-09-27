@@ -10,20 +10,18 @@ public class GitAboutPanel : GitPanel {
   private GUIContent gitVersion = null, gitBinary = null;
   private bool cantFindGit = false;
 
-  protected void LoadInfo() {
-    if(gitVersion == null) {
-      gitVersion = new GUIContent("Git Version: " + GitWrapper.Version);
-      gitBinary = new GUIContent("Git Binary: " + GitWrapper.GitBinary);
-      if(!GitWrapper.IsWorking) {
-        gitVersion = new GUIContent("Git Version:");
-        gitBinary = new GUIContent("Git Binary: Can't find git binary!");
-        cantFindGit = true;
-      }
+  public override void OnRefresh() {
+    gitVersion = new GUIContent("Git Version: " + GitWrapper.Version);
+    gitBinary = new GUIContent("Git Binary: " + GitWrapper.GitBinary);
+    if(!GitWrapper.IsWorking) {
+      gitVersion = new GUIContent("Git Version:");
+      gitBinary = new GUIContent("Git Binary: Can't find git binary!");
+      cantFindGit = true;
     }
   }
 
   public override void OnEnable() {
-    LoadInfo();
+    OnRefresh();
   }
 
   public override void OnGUI() {

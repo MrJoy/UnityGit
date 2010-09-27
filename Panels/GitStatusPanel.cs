@@ -33,7 +33,7 @@ public class GitStatusPanel : GitPanel {
 
   // Event handlers.
   public override void OnEnable() {
-    Refresh();
+    OnRefresh();
   }
 
   protected void Init() {
@@ -46,7 +46,7 @@ public class GitStatusPanel : GitPanel {
 
 
   // Operations.
-  public void Refresh() {
+  public override void OnRefresh() {
     currentBranch = GitWrapper.CurrentBranch;
     // TODO: Refactor detection of detached-head state into GitWrapper.
     if(currentBranch == "") {
@@ -214,7 +214,7 @@ public class GitStatusPanel : GitPanel {
     commitMessage = GUILayout.TextArea(commitMessage, GUILayout.MinHeight(editorLineHeight * 9 + 2), ExpandHeight);
     GUILayout.BeginHorizontal();
       if(GUILayout.Button(REFRESH_BUTTON, GitStyles.CommandLeft))
-        Refresh();
+        OnRefresh();
       GUILayout.Button(STAGE_CHANGES_BUTTON, GitStyles.CommandMid);
       if(GUILayout.Button(SIGN_OFF_BUTTON, GitStyles.CommandMid))
         SignOff();

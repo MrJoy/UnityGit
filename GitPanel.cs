@@ -12,6 +12,7 @@ public abstract class GitPanel {
   public virtual void OnEnable() {}
   public virtual void OnDisable() {}
   public virtual void OnToolbarGUI() {}
+  public virtual void OnRefresh() {}
   public abstract void OnGUI();
 
   protected static GUILayoutOption ExpandWidth = GUILayout.ExpandWidth(true),

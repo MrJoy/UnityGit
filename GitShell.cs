@@ -28,6 +28,12 @@ public class GitShell : EditorWindow {
         panel.OnDisable();
   }
 
+  private bool forceRefresh = false;
+
+  public void OnFocus() {
+    forceRefresh = true;
+  }
+
   public void OnLostFocus() { }
 
   public void OnDestroy() { }
@@ -68,12 +74,15 @@ public class GitShell : EditorWindow {
   }
 
   public void OnGUI() {
-    GitPanel panel;
+    GitPanel panel = panels[panelIndex];
+    if(forceRefresh) {
+      forceRefresh = false;
+      panel.OnRefresh();
+    }
     GUILayout.BeginHorizontal(EditorStyles.toolbar, ExpandWidth);
       for(int i = 0; i < panelLabels.Length; i++) {
         if(panelLabels[i] == null) {
           ToolbarSpace();
-          panel = panels[panelIndex];
           if(panel != null && !panel.IsDisabledForError) {
             panel.OnToolbarGUI();
             ToolbarSpace();
