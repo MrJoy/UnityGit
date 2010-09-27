@@ -142,6 +142,32 @@ public static class GitWrapper {
     }
   }
 
+  public static Change StatusForPath(string path) {
+    Change output = new Change();
+    string tmp = ShellHelpers.OutputFromCommand("git", "status --porcelain -- " + QuotePath(path));
+    char indexStatusInfo = tmp[0];
+    char workingStatusInfo = tmp[1];
+    string pathCanonical = tmp.Substring(3);
+    output.indexStatus = ChangeTypeFromChar(indexStatusInfo);
+    output.workingStatus = ChangeTypeFromChar(workingStatusInfo);
+    output.path = pathCanonical;
+    return output;
+  }
+
+  private static string QuotePath(string path) {
+    if(path.IndexOf("'") != -1)
+      throw new ArgumentException("We don't take kindly to paths with single-quotes in them, such as: \"" + path + "\".  TODO: Fix this.");
+    return "'" + path + "'";
+  }
+
+  public static void StagePath(string path) {
+    UnityEngine.Debug.Log(ShellHelpers.OutputFromCommand("git", "add --ignore-errors -- " + QuotePath(path)));
+  }
+
+  public static void UnstagePath(string path) {
+    UnityEngine.Debug.Log(ShellHelpers.OutputFromCommand("git", "reset HEAD -- " + QuotePath(path)));
+  }
+
   public static string ConfigGet(string key) {
     try {
       return ShellHelpers.OutputFromCommand("git", "config --get " + key);

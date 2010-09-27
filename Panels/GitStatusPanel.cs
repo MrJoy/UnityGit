@@ -85,7 +85,15 @@ public class GitStatusPanel : GitPanel {
   }
 
   public void StagePath(string path) {
-    Debug.LogWarning("TODO: Implement me.");
+    GitWrapper.StagePath(path);
+    GitWrapper.Change tmp = GitWrapper.StatusForPath(path);
+    for(int i = 0; i < changes.Length; i++) {
+      if(changes[i].path == tmp.path) {
+        Debug.Log("Found it.");
+        changes[i] = tmp;
+        break;
+      }
+    }
   }
 
   private static Texture DEFAULT_FILE_ICON = EditorGUIUtility.ObjectContent(null, typeof(MonoScript)).image;
