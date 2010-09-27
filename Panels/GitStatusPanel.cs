@@ -110,7 +110,6 @@ public class GitStatusPanel : GitPanel {
       }
       tmp = (GUIContent)iconCache[path];
       if(GUILayout.Button(tmp, style, ICON_WIDTH, ITEM_HEIGHT)) {
-        // TODO: Stage this path.
         StagePath(path);
         if(selectionCache.ContainsKey(path))
           selectionCache.Remove(path);
