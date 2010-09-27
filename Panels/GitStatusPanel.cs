@@ -211,7 +211,7 @@ public class GitStatusPanel : GitPanel {
   protected void ShowCommitMessageEditor() {
     // TODO: Make this scrollable, and make it obey editor commands properly.
     // TODO: Clear selection cache as appropriate.
-    commitMessage = GUILayout.TextArea(commitMessage, GUILayout.Height(editorLineHeight * 9 + 2));
+    commitMessage = GUILayout.TextArea(commitMessage, GUILayout.MinHeight(editorLineHeight * 9 + 2), ExpandHeight);
     GUILayout.BeginHorizontal();
       if(GUILayout.Button(REFRESH_BUTTON, GitStyles.CommandLeft))
         Refresh();
@@ -230,6 +230,11 @@ public class GitStatusPanel : GitPanel {
     // TODO: Implement me!!!!
     GUILayout.Box(TMP_DUMMY_DIFF, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
   }
+
+  private PaneState commitAndDiffConfiguration = new PaneState() {
+    minPaneHeightTop = 75,
+    minPaneHeightBottom = 169
+  };
 
   public override void OnGUI() {
     Init();
@@ -254,8 +259,11 @@ public class GitStatusPanel : GitPanel {
       GUILayout.EndVertical();
       Space();
       GUILayout.BeginVertical();
-        ShowDiffView();
-        ShowCommitMessageEditor();
+        BeginVerticalPanes(commitAndDiffConfiguration);
+          ShowDiffView();
+        if(VerticalSplitter()) Shell.Repaint();
+          ShowCommitMessageEditor();
+        EndVerticalPanes();
       GUILayout.EndVertical();
     GUILayout.EndHorizontal();
   }

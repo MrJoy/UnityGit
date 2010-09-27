@@ -50,7 +50,7 @@ public abstract class GitPanel {
                 isPaneHeightChanged = false;
     public float topPaneHeight = -1, lastAvailableHeight = -1,
                  availableHeight = 0,
-                 minPaneHeight = 75;
+                 minPaneHeightTop = 75, minPaneHeightBottom = 75;
 
     private float _splitterHeight = 10;
     public float splitterHeight {
@@ -76,8 +76,25 @@ public abstract class GitPanel {
   // TODO: This makes it impossible to nest pane sets!
   private static PaneState state;
   public static void BeginVerticalPanes() {
+    BeginVerticalPanes(null);
+  }
+  public static void BeginVerticalPanes(PaneState prototype) {
     int id = GUIUtility.GetControlID(FocusType.Passive);
     state = (PaneState)GUIUtility.GetStateObject(typeof(PaneState), id);
+    if(state.id != id) {
+      state.id = id;
+      state.isDraggingSplitter = false;
+      state.isPaneHeightChanged = false;
+      state.topPaneHeight = -1;
+      state.lastAvailableHeight = -1;
+      state.availableHeight = 0;
+      state.minPaneHeightTop = 75;
+      state.minPaneHeightBottom = 75;
+    } else if(prototype != null) {
+      state.id = id;
+      state.minPaneHeightTop = prototype.minPaneHeightTop;
+      state.minPaneHeightBottom = prototype.minPaneHeightBottom;
+    }
 
     Rect totalArea = EditorGUILayout.BeginVertical();
       state.availableHeight = totalArea.height - state.splitterHeight;
@@ -102,7 +119,7 @@ public abstract class GitPanel {
   public static bool VerticalSplitter() {
     GUILayout.EndVertical();
 
-    float availableHeightForOnePanel = state.availableHeight - (state.splitterHeight + state.minPaneHeight);
+    float availableHeightForOnePanel = state.availableHeight - (state.splitterHeight + state.minPaneHeightBottom);
     Rect splitterArea = GUILayoutUtility.GetRect(NoContent, GUI.skin.box, state.SplitterHeight, ExpandWidth);
     if(splitterArea.Contains(Event.current.mousePosition) || state.isDraggingSplitter) {
       switch(Event.current.type) {
@@ -119,7 +136,7 @@ public abstract class GitPanel {
       }
     }
     if(state.isPaneHeightChanged) {
-      if(state.topPaneHeight < state.minPaneHeight) state.topPaneHeight = state.minPaneHeight;
+      if(state.topPaneHeight < state.minPaneHeightTop) state.topPaneHeight = state.minPaneHeightTop;
       if(state.topPaneHeight >= availableHeightForOnePanel) state.topPaneHeight = availableHeightForOnePanel;
       return true;
     } else {
