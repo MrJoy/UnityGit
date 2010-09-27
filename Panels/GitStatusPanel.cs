@@ -67,6 +67,8 @@ public class GitStatusPanel : GitPanel {
       commitMessage += "\n" + signOffMessage;
   }
 
+  public delegate void WholeFileCommand(string path);
+
   public void StagePath(string path) {
     GitWrapper.StagePath(path);
     RefreshPath(path);
@@ -107,7 +109,7 @@ public class GitStatusPanel : GitPanel {
 
   [System.NonSerialized]
   private Hashtable iconCache = new Hashtable();
-  protected bool ShowFile(int id, Hashtable selectionCache, string path, GitWrapper.ChangeType status) {
+  protected bool ShowFile(int id, Hashtable selectionCache, string path, GitWrapper.ChangeType status, WholeFileCommand cmd) {
     bool isChanged = false;
     bool isSelected = selectionCache.ContainsKey(path) ? (bool)selectionCache[path] : false;
     bool hasFocus = (GUIUtility.hotControl == id);
@@ -127,7 +129,7 @@ public class GitStatusPanel : GitPanel {
       tmp = (GUIContent)iconCache[path];
       if(GUILayout.Button(tmp, style, ICON_WIDTH, ITEM_HEIGHT)) {
         isChanged = true;
-        StagePath(path);
+        cmd(path);
         if(selectionCache.ContainsKey(path))
           selectionCache.Remove(path);
       }
@@ -142,7 +144,6 @@ public class GitStatusPanel : GitPanel {
         isChanged = true;
         isSelected = !isSelected;
         selectionCache[path] = isSelected;
-        GUIUtility.hotControl = id;
       }
       GUI.contentColor = c;
     GUILayout.EndHorizontal();
@@ -152,7 +153,7 @@ public class GitStatusPanel : GitPanel {
   protected delegate bool FilterDelegate(GitWrapper.Change change);
   protected delegate GitWrapper.ChangeType ChangeTypeDelegate(GitWrapper.Change change);
 
-  protected Vector2 FileListView(GUIContent label, Vector2 scrollPos, FilterDelegate filter, ChangeTypeDelegate changeTypeFetcher, Hashtable selectionCache) {
+  protected Vector2 FileListView(GUIContent label, Vector2 scrollPos, FilterDelegate filter, ChangeTypeDelegate changeTypeFetcher, WholeFileCommand cmd, Hashtable selectionCache) {
     GUILayout.Label(label, GitStyles.BoldLabel, NoExpandWidth);
     int id = GUIUtility.GetControlID(FocusType.Passive);
     bool hasFocus = GUIUtility.hotControl == id;
@@ -161,7 +162,7 @@ public class GitStatusPanel : GitPanel {
       if(changes != null) {
         for(int i = 0; i < changes.Length; i++) {
           if(filter(changes[i])) {
-            isChanged = isChanged || ShowFile(id, selectionCache, changes[i].path, changeTypeFetcher(changes[i]));
+            isChanged = isChanged || ShowFile(id, selectionCache, changes[i].path, changeTypeFetcher(changes[i]), cmd);
           }
         }
       }
@@ -195,13 +196,13 @@ public class GitStatusPanel : GitPanel {
   private Hashtable workingSetSelectionCache = new Hashtable();  
   private Vector2 workingScrollPos;
   protected void ShowUnstagedChanges() {
-    workingScrollPos = FileListView(UNSTAGED_CHANGES_LABEL, workingScrollPos, WorkingSetFilter, WorkingSetFetcher, workingSetSelectionCache);
+    workingScrollPos = FileListView(UNSTAGED_CHANGES_LABEL, workingScrollPos, WorkingSetFilter, WorkingSetFetcher, StagePath, workingSetSelectionCache);
   }
 
   private Hashtable indexSetSelectionCache = new Hashtable();
   private Vector2 indexScrollPos;
   protected void ShowStagedChanges() {
-    indexScrollPos = FileListView(STAGED_CHANGES_LABEL, indexScrollPos, IndexSetFilter, IndexSetFetcher, indexSetSelectionCache);
+    indexScrollPos = FileListView(STAGED_CHANGES_LABEL, indexScrollPos, IndexSetFilter, IndexSetFetcher, UnstagePath, indexSetSelectionCache);
   }
 
   private float editorLineHeight = -1, boldLabelSpaceSize = -1;
