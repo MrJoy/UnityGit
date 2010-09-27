@@ -140,7 +140,7 @@ public class GitStatusPanel : GitPanel {
         GUILayout.Label(path, style);
         GUILayout.Space(3);
       EditorGUILayout.EndVertical();
-      if(GUI.Button(r, GUIContent.none, GUIStyle.none)) {
+      if(GUI.Button(r, NoContent, NoStyle)) {
         isChanged = true;
         isSelected = !isSelected;
         selectionCache[path] = isSelected;
@@ -243,14 +243,14 @@ public class GitStatusPanel : GitPanel {
           GUILayout.Label(currentBranchLabel, GitStyles.WhiteBoldLabel, NoExpandWidth);
           GUI.color = c;
         GUILayout.EndHorizontal();
-        GUILayout.Space(5);
+        Space();
 
         ShowUnstagedChanges();
         GUILayout.Space(5);
 
         ShowStagedChanges();
       GUILayout.EndVertical();
-      GUILayout.Space(5);
+      Space();
       GUILayout.BeginVertical();
         ShowDiffView();
         ShowCommitMessageEditor();
