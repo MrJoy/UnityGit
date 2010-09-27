@@ -1,7 +1,4 @@
-#define DEBUG_COMMANDS
-//using UnityEditor;
-//using UnityEngine;
-//using System.Collections;
+//define DEBUG_COMMANDS
 using System.Diagnostics;
 
 public class ShellHelpers {
