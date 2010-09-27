@@ -9,7 +9,7 @@ public static class GitWrapper {
     get {
       try {
         string rawName = ShellHelpers.OutputFromCommand("git", "symbolic-ref --quiet HEAD");
-        return ShellHelpers.OutputFromCommand("git", "for-each-ref --format=\"%(refname:short)\" -- " + QuoteRef(rawName));
+        return ShellHelpers.OutputFromCommand("git", "for-each-ref --format=\"%(refname:short)\" --sort=refname:short -- " + QuoteRef(rawName));
       } catch {
         _isWorking = false;
         return null;
