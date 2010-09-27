@@ -4,9 +4,8 @@ using UnityEditor;
 public abstract class GitPanel {
   public virtual bool IsDisabledForError { get { return !GitWrapper.IsWorking; } }
 
-  public GitPanel(GitShell owner) {
-    _Shell = owner;
-  }
+  public GitPanel(GitShell owner) { _Shell = owner; }
+
   private GitShell _Shell = null;
   protected virtual GitShell Shell { get { return _Shell; } }
 
