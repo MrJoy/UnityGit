@@ -142,8 +142,8 @@ public abstract class GitPanel {
     } else {
       return false;
     }
-//        GUI.Label(splitterArea, NoContent, GUI.skin.box);
-//        EditorGUIUtility.AddCursorRect(splitterArea, MouseCursor.ResizeVertical);
+    //GUI.Label(splitterArea, NoContent, GUI.skin.box);
+    //EditorGUIUtility.AddCursorRect(splitterArea, MouseCursor.ResizeVertical);
   }
 
   public static void EndVerticalPanes() {
