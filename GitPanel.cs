@@ -127,8 +127,10 @@ public abstract class GitPanel {
           vState.isDraggingSplitter = true;
           break;
         case EventType.MouseDrag:
-          vState.topPaneHeight += Event.current.delta.y;
-          vState.isPaneHeightChanged = true;
+          if(vState.isDraggingSplitter) {
+            vState.topPaneHeight += Event.current.delta.y;
+            vState.isPaneHeightChanged = true;
+          }
           break;
         case EventType.MouseUp:
           vState.isDraggingSplitter = false;
@@ -234,8 +236,10 @@ public abstract class GitPanel {
           hState.isDraggingSplitter = true;
           break;
         case EventType.MouseDrag:
-          hState.leftPaneWidth += Event.current.delta.x;
-          hState.isPaneWidthChanged = true;
+          if(hState.isDraggingSplitter) {
+            hState.leftPaneWidth += Event.current.delta.x;
+            hState.isPaneWidthChanged = true;
+          }
           break;
         case EventType.MouseUp:
           hState.isDraggingSplitter = false;
