@@ -58,9 +58,14 @@ public class GitShell : EditorWindow {
     };
   }
 
+  protected static GUILayoutOption ExpandWidth = GUILayout.ExpandWidth(true),
+                                   NoExpandWidth = GUILayout.ExpandWidth(false),
+                                   ExpandHeight = GUILayout.ExpandHeight(true),
+                                   NoExpandHeight = GUILayout.ExpandHeight(false);
+
   public void OnGUI() {
     GitPanel panel;
-    GUILayout.BeginHorizontal(EditorStyles.toolbar, GitPanel.ExpandWidth);
+    GUILayout.BeginHorizontal(EditorStyles.toolbar, ExpandWidth);
       for(int i = 0; i < panelLabels.Length; i++) {
         if(panelLabels[i] == null) {
           GUILayout.Space(10);
@@ -69,9 +74,9 @@ public class GitShell : EditorWindow {
             panel.OnToolbarGUI();
             GUILayout.Space(10);
           }
-          GUILayout.Label(GUIContent.none, GUIStyle.none, GitPanel.ExpandWidth);
+          GUILayout.Label(GUIContent.none, GUIStyle.none, ExpandWidth);
         } else {
-          if(GUILayout.Toggle((panelIndex == i), panelLabels[i], EditorStyles.toolbarButton, GitPanel.NoExpandWidth))
+          if(GUILayout.Toggle((panelIndex == i), panelLabels[i], EditorStyles.toolbarButton, NoExpandWidth))
             panelIndex = i;
         }
       }
