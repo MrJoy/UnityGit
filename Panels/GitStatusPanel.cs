@@ -94,8 +94,15 @@ public class GitStatusPanel : GitPanel {
     return c;
   }
 
+  public void StagePath(string path) {
+    Debug.LogWarning("TODO: Implement me.");
+  }
+
   private Hashtable iconCache = new Hashtable();
-  private void ShowFile(string path, GitWrapper.ChangeType status, bool isSelected) {
+  private Hashtable selectionCache = new Hashtable();
+  private void ShowFile(string path, GitWrapper.ChangeType status) {
+    bool isSelected = selectionCache.ContainsKey(path) ? (bool)selectionCache[path] : false;
+
     GUIStyle style = isSelected ? GitStyles.FileLabelSelected : GitStyles.FileLabel;
     GUILayout.BeginHorizontal();
       GUIContent tmp = null;
@@ -108,6 +115,10 @@ public class GitStatusPanel : GitPanel {
       }
       tmp = (GUIContent)iconCache[path];
       if(GUILayout.Button(tmp, style, ICON_WIDTH, ITEM_HEIGHT)) {
+        // TODO: Stage this path.
+        StagePath(path);
+        if(selectionCache.ContainsKey(path))
+          selectionCache.Remove(path);
       }
       Color c = GUI.contentColor;
       GUI.contentColor = ColorForChangeType(status);
@@ -116,6 +127,11 @@ public class GitStatusPanel : GitPanel {
         GUILayout.Label(path, style);
         GUILayout.Space(3);
       EditorGUILayout.EndVertical();
+      if(r.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown) {
+        isSelected = !isSelected;
+        selectionCache[path] = isSelected;
+        Shell.Repaint();
+      }
       GUI.contentColor = c;
     GUILayout.EndHorizontal();
   }
@@ -129,7 +145,7 @@ public class GitStatusPanel : GitPanel {
       if(changes != null) {
         for(int i = 0; i < changes.Length; i++) {
           if(changes[i].workingStatus != GitWrapper.ChangeType.Unmodified) {
-            ShowFile(changes[i].path, changes[i].workingStatus, i < 2);
+            ShowFile(changes[i].path, changes[i].workingStatus);
           }
         }
       }
@@ -143,7 +159,7 @@ public class GitStatusPanel : GitPanel {
       if(changes != null) {
         for(int i = 0; i < changes.Length; i++) {
           if(changes[i].indexStatus != GitWrapper.ChangeType.Unmodified && changes[i].indexStatus != GitWrapper.ChangeType.Untracked) {
-            ShowFile(changes[i].path, changes[i].indexStatus, false);
+            ShowFile(changes[i].path, changes[i].indexStatus);
           }
         }
       }
@@ -155,6 +171,7 @@ public class GitStatusPanel : GitPanel {
   private bool amendCommit = false;
   public void ShowCommitMessageEditor() {
     // TODO: Make this scrollable, and make it obey editor commands properly.
+    // TODO: Clear selection cache as appropriate.
     commitMessage = GUILayout.TextArea(commitMessage, GUILayout.Height(editorLineHeight * 9 + 2));
     GUILayout.BeginHorizontal();
       if(GUILayout.Button(REFRESH_BUTTON, GitStyles.CommandLeft)) {
