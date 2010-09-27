@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 public static class GitWrapper {
   private static bool _isWorking = true;
@@ -13,6 +14,52 @@ public static class GitWrapper {
         _isWorking = false;
         return null;
       }
+    }
+  }
+
+  public enum RefKind {
+    Branch, TrackingBranch, Tag, Other
+  }
+
+  public struct Ref {
+    // NOTE: shortName must be an UNAMBIGUOUS short name.
+    public string fullName, shortName, id, upstream;
+    private bool isInitialized;
+    private RefKind _kind;
+    public RefKind kind {
+      get {
+        if(!isInitialized) {
+          isInitialized = true;
+          if(fullName.StartsWith("refs/heads/")) 
+            _kind = RefKind.Branch;
+          else if(fullName.StartsWith("refs/remotes/"))
+            _kind = RefKind.TrackingBranch;
+          else if(fullName.StartsWith("refs/tags/"))
+            _kind = RefKind.Tag;
+          else
+            _kind = RefKind.Other;
+        }
+        return _kind;
+      }
+    }
+  }
+
+  public static Ref[] Refs {
+    get {
+      string tmp = ShellHelpers.OutputFromCommand("git", "for-each-ref --format=\"%(refname)%09%(refname:short)%09%(objectname)%09%(upstream)\"");
+      string[] rawRefs = tmp.Split('\n');
+      List<Ref> refs = new List<Ref>();
+      foreach(string rawRef in rawRefs) {
+        string[] fields = rawRef.Split('\t');
+        Ref r = new Ref() {
+          fullName = fields[0],
+          shortName = fields[1],
+          id = fields[2],
+          upstream = String.IsNullOrEmpty(fields[3]) ? null : fields[3]
+        };
+        refs.Add(r);
+      }
+      return refs.ToArray();
     }
   }
 
@@ -153,6 +200,12 @@ public static class GitWrapper {
     output.workingStatus = ChangeTypeFromChar(workingStatusInfo);
     output.path = pathCanonical;
     return output;
+  }
+
+  private static string QuoteRef(string refName) {
+    if(refName.IndexOf("'") != -1)
+      throw new ArgumentException("We don't take kindly to refs with single-quotes in them, such as: \"" + refName + "\".  TODO: Fix this.");
+    return "'" + refName + "'";
   }
 
   private static string QuotePath(string path) {
