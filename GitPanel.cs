@@ -206,9 +206,9 @@ public abstract class GitPanel {
     }
 
     Rect totalArea = EditorGUILayout.BeginHorizontal();
-      hState.availableWidth = totalArea.height - hState.splitterWidth;
+      hState.availableWidth = totalArea.width - hState.splitterWidth;
       hState.isPaneWidthChanged = false;
-      if(totalArea.height > 0) {
+      if(totalArea.width > 0) {
         if(hState.leftPaneWidth < 0) {
           hState.leftPaneWidth = hState.availableWidth * 0.5f;
           hState.isPaneWidthChanged = true;
