@@ -213,9 +213,8 @@ public class GitStatusPanel : GitPanel {
     // TODO: Clear selection cache as appropriate.
     commitMessage = GUILayout.TextArea(commitMessage, GUILayout.Height(editorLineHeight * 9 + 2));
     GUILayout.BeginHorizontal();
-      if(GUILayout.Button(REFRESH_BUTTON, GitStyles.CommandLeft)) {
+      if(GUILayout.Button(REFRESH_BUTTON, GitStyles.CommandLeft))
         Refresh();
-      }
       GUILayout.Button(STAGE_CHANGES_BUTTON, GitStyles.CommandMid);
       if(GUILayout.Button(SIGN_OFF_BUTTON, GitStyles.CommandMid))
         SignOff();
