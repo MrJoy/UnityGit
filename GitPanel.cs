@@ -37,6 +37,7 @@ public abstract class GitPanel {
   private static GUIContent DUMMY_WITHOUT_SPACE = new GUIContent(".");
 
   public static float SizeOfSpace(GUIStyle style) {
+    // TODO: Make this less expensive than I believe it to be.
     float x1 = style.CalcSize(DUMMY_WITH_SPACE).x;
     float x2 = style.CalcSize(DUMMY_WITHOUT_SPACE).x;
     return x1 - x2;
