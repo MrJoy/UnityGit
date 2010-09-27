@@ -102,8 +102,8 @@ public class GitStatusPanel : GitPanel {
   private Hashtable selectionCache = new Hashtable();
   private void ShowFile(string path, GitWrapper.ChangeType status) {
     bool isSelected = selectionCache.ContainsKey(path) ? (bool)selectionCache[path] : false;
-
     GUIStyle style = isSelected ? GitStyles.FileLabelSelected : GitStyles.FileLabel;
+
     GUILayout.BeginHorizontal();
       GUIContent tmp = null;
       if(!iconCache.ContainsKey(path)) {
