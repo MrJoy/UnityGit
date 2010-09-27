@@ -110,12 +110,7 @@ public class GitStatusPanel : GitPanel {
   protected bool ShowFile(int id, Hashtable selectionCache, string path, GitWrapper.ChangeType status) {
     bool isChanged = false;
     bool isSelected = selectionCache.ContainsKey(path) ? (bool)selectionCache[path] : false;
-    // TODO: This is a VERY ugly hack to not "lose" focus when we click a button
-    // TODO: in here due to the button stealing the focus from our list view.
-    // TODO: Strictly speaking we don't know which widget is being clicked but 
-    // TODO: I'm operating under the assumption that that's a moot issue since
-    // TODO: the list view 
-    bool hasFocus = (GUIUtility.hotControl == id) || (Event.current.button == 0);
+    bool hasFocus = (GUIUtility.hotControl == id);
     GUIStyle style = isSelected ? (hasFocus ? GitStyles.FileLabelSelected : GitStyles.FileLabelSelectedUnfocused) : GitStyles.FileLabel;
 
     GUILayout.BeginHorizontal();
