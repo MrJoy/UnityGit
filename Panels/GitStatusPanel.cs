@@ -172,6 +172,7 @@ public class GitStatusPanel : GitPanel {
     if(isChanged && !hasFocus) {
       Debug.Log("Focusing on " + id);
       GUIUtility.hotControl = id;
+      Shell.Repaint();
     }
     return scrollPos;
   }
