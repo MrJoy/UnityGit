@@ -7,8 +7,8 @@ public static class GitWrapper {
   public static string CurrentBranch {
     get {
       try {
-        return ShellHelpers.OutputFromCommand("git", "symbolic-ref --quiet HEAD")
-          .Replace("refs/heads/", "").Replace("\n", "");
+        string rawName = ShellHelpers.OutputFromCommand("git", "symbolic-ref --quiet HEAD");
+        return ShellHelpers.OutputFromCommand("git", "for-each-ref --format=\"%(refname:short)\" -- " + QuoteRef(rawName));
       } catch {
         _isWorking = false;
         return null;
