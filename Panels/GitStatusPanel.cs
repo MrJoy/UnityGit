@@ -231,16 +231,27 @@ public class GitStatusPanel : GitPanel {
     GUILayout.Box(TMP_DUMMY_DIFF, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
   }
 
-  private PaneState commitAndDiffConfiguration = new PaneState() {
+  private VerticalPaneState changesConfiguration = new VerticalPaneState() {
+    minPaneHeightTop = 100,
+    minPaneHeightBottom = 100
+  };
+
+  private VerticalPaneState commitAndDiffConfiguration = new VerticalPaneState() {
     minPaneHeightTop = 75,
-    minPaneHeightBottom = 169
+    minPaneHeightBottom = 180
+  };
+
+  private HorizontalPaneState overallConfiguration = new HorizontalPaneState() {
+    minPaneWidthLeft = 150,
+    minPaneWidthRight = 0
   };
 
   public override void OnGUI() {
     Init();
 
     Color c = GUI.color;
-    GUILayout.BeginHorizontal(NoExpandHeight);
+    BeginHorizontalPanes(overallConfiguration);
+//    GUILayout.BeginHorizontal(NoExpandHeight);
       GUILayout.BeginVertical();
         GUILayout.BeginHorizontal();
           GUILayout.Label(CURRENT_BRANCH_LABEL, GitStyles.BoldLabel, NoExpandWidth);
@@ -251,13 +262,14 @@ public class GitStatusPanel : GitPanel {
         GUILayout.EndHorizontal();
         Space();
 
-        BeginVerticalPanes();
+        BeginVerticalPanes(changesConfiguration);
           ShowUnstagedChanges();
         if(VerticalSplitter()) Shell.Repaint();
           ShowStagedChanges();
         EndVerticalPanes();
       GUILayout.EndVertical();
-      Space();
+    if(HorizontalSplitter()) Shell.Repaint();
+//      Space();
       GUILayout.BeginVertical();
         BeginVerticalPanes(commitAndDiffConfiguration);
           ShowDiffView();
@@ -265,7 +277,8 @@ public class GitStatusPanel : GitPanel {
           ShowCommitMessageEditor();
         EndVerticalPanes();
       GUILayout.EndVertical();
-    GUILayout.EndHorizontal();
+//    GUILayout.EndHorizontal();
+    EndHorizontalPanes();
   }
 
   // Base constructor

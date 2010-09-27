@@ -44,7 +44,7 @@ public abstract class GitPanel {
   }
 
 
-  public class PaneState {
+  public class VerticalPaneState {
     public int id = 0;
     public bool isDraggingSplitter = false,
                 isPaneHeightChanged = false;
@@ -52,7 +52,7 @@ public abstract class GitPanel {
                  availableHeight = 0,
                  minPaneHeightTop = 75, minPaneHeightBottom = 75;
 
-    private float _splitterHeight = 10;
+    private float _splitterHeight = 5;
     public float splitterHeight {
       get { return _splitterHeight; }
       set {
@@ -74,70 +74,70 @@ public abstract class GitPanel {
   }
 
   // TODO: This makes it impossible to nest pane sets!
-  private static PaneState state;
+  private static VerticalPaneState vState;
   public static void BeginVerticalPanes() {
     BeginVerticalPanes(null);
   }
-  public static void BeginVerticalPanes(PaneState prototype) {
+  public static void BeginVerticalPanes(VerticalPaneState prototype) {
     int id = GUIUtility.GetControlID(FocusType.Passive);
-    state = (PaneState)GUIUtility.GetStateObject(typeof(PaneState), id);
-    if(state.id != id) {
-      state.id = id;
-      state.isDraggingSplitter = false;
-      state.isPaneHeightChanged = false;
-      state.topPaneHeight = -1;
-      state.lastAvailableHeight = -1;
-      state.availableHeight = 0;
-      state.minPaneHeightTop = 75;
-      state.minPaneHeightBottom = 75;
+    vState = (VerticalPaneState)GUIUtility.GetStateObject(typeof(VerticalPaneState), id);
+    if(vState.id != id) {
+      vState.id = id;
+      vState.isDraggingSplitter = false;
+      vState.isPaneHeightChanged = false;
+      vState.topPaneHeight = -1;
+      vState.lastAvailableHeight = -1;
+      vState.availableHeight = 0;
+      vState.minPaneHeightTop = 75;
+      vState.minPaneHeightBottom = 75;
     } else if(prototype != null) {
-      state.id = id;
-      state.minPaneHeightTop = prototype.minPaneHeightTop;
-      state.minPaneHeightBottom = prototype.minPaneHeightBottom;
+      vState.id = id;
+      vState.minPaneHeightTop = prototype.minPaneHeightTop;
+      vState.minPaneHeightBottom = prototype.minPaneHeightBottom;
     }
 
     Rect totalArea = EditorGUILayout.BeginVertical();
-      state.availableHeight = totalArea.height - state.splitterHeight;
-      state.isPaneHeightChanged = false;
+      vState.availableHeight = totalArea.height - vState.splitterHeight;
+      vState.isPaneHeightChanged = false;
       if(totalArea.height > 0) {
-        if(state.topPaneHeight < 0) {
-          state.topPaneHeight = state.availableHeight * 0.5f;
-          state.isPaneHeightChanged = true;
+        if(vState.topPaneHeight < 0) {
+          vState.topPaneHeight = vState.availableHeight * 0.5f;
+          vState.isPaneHeightChanged = true;
         }
-        if(state.lastAvailableHeight < 0)
-          state.lastAvailableHeight = state.availableHeight;
-        if(state.lastAvailableHeight != state.availableHeight) {
-          state.topPaneHeight = state.availableHeight * (state.topPaneHeight / state.lastAvailableHeight);
-          state.isPaneHeightChanged = true;
+        if(vState.lastAvailableHeight < 0)
+          vState.lastAvailableHeight = vState.availableHeight;
+        if(vState.lastAvailableHeight != vState.availableHeight) {
+          vState.topPaneHeight = vState.availableHeight * (vState.topPaneHeight / vState.lastAvailableHeight);
+          vState.isPaneHeightChanged = true;
         }
-        state.lastAvailableHeight = state.availableHeight;
+        vState.lastAvailableHeight = vState.availableHeight;
       }
 
-      GUILayout.BeginVertical(GUILayout.Height(state.topPaneHeight));
+      GUILayout.BeginVertical(GUILayout.Height(vState.topPaneHeight));
   }
 
   public static bool VerticalSplitter() {
     GUILayout.EndVertical();
 
-    float availableHeightForOnePanel = state.availableHeight - (state.splitterHeight + state.minPaneHeightBottom);
-    Rect splitterArea = GUILayoutUtility.GetRect(NoContent, GUI.skin.box, state.SplitterHeight, ExpandWidth);
-    if(splitterArea.Contains(Event.current.mousePosition) || state.isDraggingSplitter) {
+    float availableHeightForOnePanel = vState.availableHeight - (vState.splitterHeight + vState.minPaneHeightBottom);
+    Rect splitterArea = GUILayoutUtility.GetRect(NoContent, GUI.skin.box, vState.SplitterHeight, ExpandWidth);
+    if(splitterArea.Contains(Event.current.mousePosition) || vState.isDraggingSplitter) {
       switch(Event.current.type) {
         case EventType.MouseDown:
-          state.isDraggingSplitter = true;
+          vState.isDraggingSplitter = true;
           break;
         case EventType.MouseDrag:
-          state.topPaneHeight += Event.current.delta.y;
-          state.isPaneHeightChanged = true;
+          vState.topPaneHeight += Event.current.delta.y;
+          vState.isPaneHeightChanged = true;
           break;
         case EventType.MouseUp:
-          state.isDraggingSplitter = false;
+          vState.isDraggingSplitter = false;
           break;
       }
     }
-    if(state.isPaneHeightChanged) {
-      if(state.topPaneHeight < state.minPaneHeightTop) state.topPaneHeight = state.minPaneHeightTop;
-      if(state.topPaneHeight >= availableHeightForOnePanel) state.topPaneHeight = availableHeightForOnePanel;
+    if(vState.isPaneHeightChanged) {
+      if(vState.topPaneHeight < vState.minPaneHeightTop) vState.topPaneHeight = vState.minPaneHeightTop;
+      if(vState.topPaneHeight >= availableHeightForOnePanel) vState.topPaneHeight = availableHeightForOnePanel;
       return true;
     } else {
       return false;
@@ -150,4 +150,110 @@ public abstract class GitPanel {
     EditorGUILayout.EndVertical();
   }
 
+
+  public class HorizontalPaneState {
+    public int id = 0;
+    public bool isDraggingSplitter = false,
+                isPaneWidthChanged = false;
+    public float leftPaneWidth = -1, lastAvailableWidth = -1,
+                 availableWidth = 0,
+                 minPaneWidthLeft = 75, minPaneWidthRight = 75;
+
+    private float _splitterWidth = 5;
+    public float splitterWidth {
+      get { return _splitterWidth; }
+      set {
+        if(value != _splitterWidth) {
+          _splitterWidth = value;
+          _SplitterWidth = null;
+        }
+      }
+    }
+
+    private GUILayoutOption _SplitterWidth = null;
+    public GUILayoutOption SplitterWidth {
+      get { 
+        if(_SplitterWidth == null)
+          _SplitterWidth = GUILayout.Width(_splitterWidth);
+        return _SplitterWidth;
+      }
+    }
+  }
+
+  // TODO: This makes it impossible to nest pane sets!
+  private static HorizontalPaneState hState;
+  public static void BeginHorizontalPanes() {
+    BeginHorizontalPanes(null);
+  }
+  public static void BeginHorizontalPanes(HorizontalPaneState prototype) {
+    int id = GUIUtility.GetControlID(FocusType.Passive);
+    hState = (HorizontalPaneState)GUIUtility.GetStateObject(typeof(HorizontalPaneState), id);
+    if(hState.id != id) {
+      hState.id = id;
+      hState.isDraggingSplitter = false;
+      hState.isPaneWidthChanged = false;
+      hState.leftPaneWidth = -1;
+      hState.lastAvailableWidth = -1;
+      hState.availableWidth = 0;
+      hState.minPaneWidthLeft = 75;
+      hState.minPaneWidthRight = 75;
+    } else if(prototype != null) {
+      hState.id = id;
+      hState.minPaneWidthLeft = prototype.minPaneWidthLeft;
+      hState.minPaneWidthRight = prototype.minPaneWidthRight;
+    }
+
+    Rect totalArea = EditorGUILayout.BeginHorizontal();
+      hState.availableWidth = totalArea.height - hState.splitterWidth;
+      hState.isPaneWidthChanged = false;
+      if(totalArea.height > 0) {
+        if(hState.leftPaneWidth < 0) {
+          hState.leftPaneWidth = hState.availableWidth * 0.5f;
+          hState.isPaneWidthChanged = true;
+        }
+        if(hState.lastAvailableWidth < 0)
+          hState.lastAvailableWidth = hState.availableWidth;
+        if(hState.lastAvailableWidth != hState.availableWidth) {
+          hState.leftPaneWidth = hState.availableWidth * (hState.leftPaneWidth / hState.lastAvailableWidth);
+          hState.isPaneWidthChanged = true;
+        }
+        hState.lastAvailableWidth = hState.availableWidth;
+      }
+
+      GUILayout.BeginHorizontal(GUILayout.Width(hState.leftPaneWidth));
+  }
+
+  public static bool HorizontalSplitter() {
+    GUILayout.EndHorizontal();
+
+    float availableWidthForOnePanel = hState.availableWidth - (hState.splitterWidth + hState.minPaneWidthRight);
+    Rect splitterArea = GUILayoutUtility.GetRect(NoContent, GUI.skin.box, hState.SplitterWidth, ExpandHeight);
+    if(splitterArea.Contains(Event.current.mousePosition) || hState.isDraggingSplitter) {
+      switch(Event.current.type) {
+        case EventType.MouseDown:
+          hState.isDraggingSplitter = true;
+          break;
+        case EventType.MouseDrag:
+          hState.leftPaneWidth += Event.current.delta.x;
+          hState.isPaneWidthChanged = true;
+          break;
+        case EventType.MouseUp:
+          hState.isDraggingSplitter = false;
+          break;
+      }
+    }
+    if(hState.isPaneWidthChanged) {
+      if(hState.leftPaneWidth < hState.minPaneWidthLeft) hState.leftPaneWidth = hState.minPaneWidthLeft;
+      if(hState.leftPaneWidth >= availableWidthForOnePanel) hState.leftPaneWidth = availableWidthForOnePanel;
+      return true;
+    } else {
+      return false;
+    }
+    //GUI.Label(splitterArea, NoContent, GUI.skin.box);
+    //EditorGUIUtility.AddCursorRect(splitterArea, MouseCursor.ResizeHorizontal);
+  }
+
+  public static void EndHorizontalPanes() {
+    EditorGUILayout.EndHorizontal();
+  }
 }
