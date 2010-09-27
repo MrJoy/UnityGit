@@ -19,6 +19,13 @@ public abstract class GitPanel {
                                    ExpandHeight = GUILayout.ExpandHeight(true),
                                    NoExpandHeight = GUILayout.ExpandHeight(false);
 
+  protected static GUIContent NoContent = GUIContent.none;
+  protected static GUIStyle NoStyle = GUIStyle.none;
+
+  protected static void Space() {
+    GUILayout.Space(5);
+  }
+
   protected static void LinkTo(GUIContent label, string url) {
     // TODO: Find a way to make this underlined and have the expected cursor.
     if(GUILayout.Button(label, GitStyles.Link)) {

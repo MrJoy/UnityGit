@@ -63,16 +63,20 @@ public class GitShell : EditorWindow {
                                    ExpandHeight = GUILayout.ExpandHeight(true),
                                    NoExpandHeight = GUILayout.ExpandHeight(false);
 
+  protected static void ToolbarSpace() {
+    GUILayout.Space(10);
+  }
+
   public void OnGUI() {
     GitPanel panel;
     GUILayout.BeginHorizontal(EditorStyles.toolbar, ExpandWidth);
       for(int i = 0; i < panelLabels.Length; i++) {
         if(panelLabels[i] == null) {
-          GUILayout.Space(10);
+          ToolbarSpace();
           panel = panels[panelIndex];
           if(panel != null && !panel.IsDisabledForError) {
             panel.OnToolbarGUI();
-            GUILayout.Space(10);
+            ToolbarSpace();
           }
           GUILayout.Label(GUIContent.none, GUIStyle.none, ExpandWidth);
         } else {
