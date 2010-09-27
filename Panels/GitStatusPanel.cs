@@ -170,7 +170,6 @@ public class GitStatusPanel : GitPanel {
     Rect r = GUILayoutUtility.GetLastRect();
     isChanged = isChanged || ((Event.current.type == EventType.MouseDown) && r.Contains(Event.current.mousePosition));
     if(isChanged && !hasFocus) {
-      Debug.Log("Focusing on " + id);
       GUIUtility.hotControl = id;
       Shell.Repaint();
     }
