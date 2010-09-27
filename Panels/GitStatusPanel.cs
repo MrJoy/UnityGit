@@ -17,6 +17,7 @@ public class GitStatusPanel : GitPanel {
 
 
   // Static helper data.
+  private static Texture DEFAULT_FILE_ICON = EditorGUIUtility.ObjectContent(null, typeof(MonoScript)).image;
   private static GUIContent DUMMY_CONTENT = new GUIContent("X");
   private static GUILayoutOption ICON_WIDTH = GUILayout.Width(16), 
                                  ITEM_HEIGHT = GUILayout.Height(21), 
@@ -66,6 +67,16 @@ public class GitStatusPanel : GitPanel {
       commitMessage += "\n" + signOffMessage;
   }
 
+  public void StagePath(string path) {
+    GitWrapper.StagePath(path);
+    RefreshPath(path);
+  }
+
+  public void UnstagePath(string path) {
+    GitWrapper.UnstagePath(path);
+    RefreshPath(path);
+  }
+
 
   // Helpers.
   private Color ColorForChangeType(GitWrapper.ChangeType status) {
@@ -84,19 +95,15 @@ public class GitStatusPanel : GitPanel {
     return c;
   }
 
-  public void StagePath(string path) {
-    GitWrapper.StagePath(path);
+  protected void RefreshPath(string path) {
     GitWrapper.Change tmp = GitWrapper.StatusForPath(path);
     for(int i = 0; i < changes.Length; i++) {
       if(changes[i].path == tmp.path) {
-        Debug.Log("Found it.");
         changes[i] = tmp;
         break;
       }
     }
   }
-
-  private static Texture DEFAULT_FILE_ICON = EditorGUIUtility.ObjectContent(null, typeof(MonoScript)).image;
 
   [System.NonSerialized]
   private Hashtable iconCache = new Hashtable();
