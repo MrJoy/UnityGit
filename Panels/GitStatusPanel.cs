@@ -243,7 +243,8 @@ public class GitStatusPanel : GitPanel {
 
   private HorizontalPaneState overallConfiguration = new HorizontalPaneState() {
     minPaneWidthLeft = 150,
-    minPaneWidthRight = 0
+    minPaneWidthRight = 400,
+    initialLeftPaneWidth = 220
   };
 
   public override void OnGUI() {

@@ -48,8 +48,8 @@ public abstract class GitPanel {
     public int id = 0;
     public bool isDraggingSplitter = false,
                 isPaneHeightChanged = false;
-    public float topPaneHeight = -1, lastAvailableHeight = -1,
-                 availableHeight = 0,
+    public float topPaneHeight = -1, initialTopPaneHeight = -1,
+                 lastAvailableHeight = -1, availableHeight = 0,
                  minPaneHeightTop = 75, minPaneHeightBottom = 75;
 
     private float _splitterHeight = 5;
@@ -86,12 +86,14 @@ public abstract class GitPanel {
       vState.isDraggingSplitter = false;
       vState.isPaneHeightChanged = false;
       vState.topPaneHeight = -1;
+      vState.initialTopPaneHeight = -1;
       vState.lastAvailableHeight = -1;
       vState.availableHeight = 0;
       vState.minPaneHeightTop = 75;
       vState.minPaneHeightBottom = 75;
     } else if(prototype != null) {
       vState.id = id;
+      vState.initialTopPaneHeight = prototype.initialTopPaneHeight;
       vState.minPaneHeightTop = prototype.minPaneHeightTop;
       vState.minPaneHeightBottom = prototype.minPaneHeightBottom;
     }
@@ -101,7 +103,10 @@ public abstract class GitPanel {
       vState.isPaneHeightChanged = false;
       if(totalArea.height > 0) {
         if(vState.topPaneHeight < 0) {
-          vState.topPaneHeight = vState.availableHeight * 0.5f;
+          if(vState.initialTopPaneHeight < 0)
+            vState.topPaneHeight = vState.availableHeight * 0.5f;
+          else
+            vState.topPaneHeight = vState.initialTopPaneHeight;
           vState.isPaneHeightChanged = true;
         }
         if(vState.lastAvailableHeight < 0)
@@ -157,8 +162,8 @@ public abstract class GitPanel {
     public int id = 0;
     public bool isDraggingSplitter = false,
                 isPaneWidthChanged = false;
-    public float leftPaneWidth = -1, lastAvailableWidth = -1,
-                 availableWidth = 0,
+    public float leftPaneWidth = -1, initialLeftPaneWidth = -1,
+                 lastAvailableWidth = -1, availableWidth = 0,
                  minPaneWidthLeft = 75, minPaneWidthRight = 75;
 
     private float _splitterWidth = 5;
@@ -195,12 +200,14 @@ public abstract class GitPanel {
       hState.isDraggingSplitter = false;
       hState.isPaneWidthChanged = false;
       hState.leftPaneWidth = -1;
+      hState.initialLeftPaneWidth = -1;
       hState.lastAvailableWidth = -1;
       hState.availableWidth = 0;
       hState.minPaneWidthLeft = 75;
       hState.minPaneWidthRight = 75;
     } else if(prototype != null) {
       hState.id = id;
+      hState.initialLeftPaneWidth = prototype.initialLeftPaneWidth;
       hState.minPaneWidthLeft = prototype.minPaneWidthLeft;
       hState.minPaneWidthRight = prototype.minPaneWidthRight;
     }
@@ -210,7 +217,10 @@ public abstract class GitPanel {
       hState.isPaneWidthChanged = false;
       if(totalArea.width > 0) {
         if(hState.leftPaneWidth < 0) {
-          hState.leftPaneWidth = hState.availableWidth * 0.5f;
+          if(hState.initialLeftPaneWidth < 0)
+            hState.leftPaneWidth = hState.availableWidth * 0.5f;
+          else
+            hState.leftPaneWidth = hState.initialLeftPaneWidth;
           hState.isPaneWidthChanged = true;
         }
         if(hState.lastAvailableWidth < 0)
