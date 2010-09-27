@@ -229,6 +229,7 @@ public class GitStatusPanel : GitPanel {
   }
 
   protected void ShowDiffView() {
+    // TODO: Implement me!!!!
     GUILayout.Box(TMP_DUMMY_DIFF, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
   }
 
