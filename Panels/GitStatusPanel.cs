@@ -100,8 +100,7 @@ public class GitStatusPanel : GitPanel {
 
   [System.NonSerialized]
   private Hashtable iconCache = new Hashtable();
-  private Hashtable selectionCache = new Hashtable();
-  private void ShowFile(string path, GitWrapper.ChangeType status) {
+  private void ShowFile(Hashtable selectionCache, string path, GitWrapper.ChangeType status) {
     bool isSelected = selectionCache.ContainsKey(path) ? (bool)selectionCache[path] : false;
     GUIStyle style = isSelected ? GitStyles.FileLabelSelected : GitStyles.FileLabel;
 
@@ -139,6 +138,7 @@ public class GitStatusPanel : GitPanel {
 
 
   // Sub-views.
+  private Hashtable workingSetSelectionCache = new Hashtable();  
   private Vector2 workingScrollPos;
   private void ShowUnstagedChanges() {
     GUILayout.Label(UNSTAGED_CHANGES_LABEL, GitStyles.BoldLabel, NoExpandWidth);
@@ -146,13 +146,14 @@ public class GitStatusPanel : GitPanel {
       if(changes != null) {
         for(int i = 0; i < changes.Length; i++) {
           if(changes[i].workingStatus != GitWrapper.ChangeType.Unmodified) {
-            ShowFile(changes[i].path, changes[i].workingStatus);
+            ShowFile(workingSetSelectionCache, changes[i].path, changes[i].workingStatus);
           }
         }
       }
     EditorGUILayout.EndScrollView();
   }
 
+  private Hashtable indexSetSelectionCache = new Hashtable();
   private Vector2 indexScrollPos;
   private void ShowStagedChanges() {
     GUILayout.Label(STAGED_CHANGES_LABEL, GitStyles.BoldLabel, NoExpandWidth);
@@ -160,7 +161,7 @@ public class GitStatusPanel : GitPanel {
       if(changes != null) {
         for(int i = 0; i < changes.Length; i++) {
           if(changes[i].indexStatus != GitWrapper.ChangeType.Unmodified && changes[i].indexStatus != GitWrapper.ChangeType.Untracked) {
-            ShowFile(changes[i].path, changes[i].indexStatus);
+            ShowFile(indexSetSelectionCache, changes[i].path, changes[i].indexStatus);
           }
         }
       }
