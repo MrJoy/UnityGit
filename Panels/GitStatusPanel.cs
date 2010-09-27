@@ -79,7 +79,7 @@ public class GitStatusPanel : GitPanel {
 
 
   // Helpers.
-  private Color ColorForChangeType(GitWrapper.ChangeType status) {
+  public Color ColorForChangeType(GitWrapper.ChangeType status) {
     Color c = Color.red;
     switch(status) {
       case GitWrapper.ChangeType.Modified:  c = GitStyles.ModifiedColor; break;
@@ -95,7 +95,7 @@ public class GitStatusPanel : GitPanel {
     return c;
   }
 
-  protected void RefreshPath(string path) {
+  public void RefreshPath(string path) {
     GitWrapper.Change tmp = GitWrapper.StatusForPath(path);
     for(int i = 0; i < changes.Length; i++) {
       if(changes[i].path == tmp.path) {
@@ -107,7 +107,7 @@ public class GitStatusPanel : GitPanel {
 
   [System.NonSerialized]
   private Hashtable iconCache = new Hashtable();
-  private void ShowFile(Hashtable selectionCache, string path, GitWrapper.ChangeType status) {
+  protected bool ShowFile(Hashtable selectionCache, string path, GitWrapper.ChangeType status) {
     bool isSelected = selectionCache.ContainsKey(path) ? (bool)selectionCache[path] : false;
     GUIStyle style = isSelected ? GitStyles.FileLabelSelected : GitStyles.FileLabel;
 
@@ -178,7 +178,7 @@ public class GitStatusPanel : GitPanel {
   private float editorLineHeight = -1, boldLabelSpaceSize = -1;
   private string commitMessage = "";
   private bool amendCommit = false;
-  public void ShowCommitMessageEditor() {
+  protected void ShowCommitMessageEditor() {
     // TODO: Make this scrollable, and make it obey editor commands properly.
     // TODO: Clear selection cache as appropriate.
     commitMessage = GUILayout.TextArea(commitMessage, GUILayout.Height(editorLineHeight * 9 + 2));
@@ -197,7 +197,7 @@ public class GitStatusPanel : GitPanel {
     GUILayout.EndHorizontal();
   }
 
-  public void ShowDiffView() {
+  protected void ShowDiffView() {
     GUILayout.Box(TMP_DUMMY_DIFF, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
   }
 
