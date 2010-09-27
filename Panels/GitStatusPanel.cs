@@ -21,7 +21,6 @@ public class GitStatusPanel : GitPanel {
   private static GUILayoutOption ICON_WIDTH = GUILayout.Width(16), 
                                  ITEM_HEIGHT = GUILayout.Height(21), 
                                  MAX_ITEM_HEIGHT = GUILayout.MaxHeight(21);
-  private static Texture2D BLANK_TEX = null;
 
 
   // Overarching state for the panel.
@@ -34,15 +33,6 @@ public class GitStatusPanel : GitPanel {
   // Event handlers.
   public override void OnEnable() {
     Refresh();
-    if(BLANK_TEX == null) {
-      BLANK_TEX = new Texture2D(16, 16);
-      BLANK_TEX.hideFlags = HideFlags.HideAndDontSave;
-      Color[] tmp = new Color[16 * 16];
-      for(int i = 0; i < tmp.Length; i++)
-        tmp[i] = Color.clear;
-      BLANK_TEX.SetPixels(tmp);
-      BLANK_TEX.Apply();
-    }
   }
 
   protected void Init() {
@@ -98,6 +88,9 @@ public class GitStatusPanel : GitPanel {
     Debug.LogWarning("TODO: Implement me.");
   }
 
+  private static Texture DEFAULT_FILE_ICON = EditorGUIUtility.ObjectContent(null, typeof(MonoScript)).image;
+
+  [System.NonSerialized]
   private Hashtable iconCache = new Hashtable();
   private Hashtable selectionCache = new Hashtable();
   private void ShowFile(string path, GitWrapper.ChangeType status) {
@@ -108,9 +101,11 @@ public class GitStatusPanel : GitPanel {
       GUIContent tmp = null;
       if(!iconCache.ContainsKey(path)) {
         tmp = new GUIContent() {
-          image = AssetDatabase.GetCachedIcon(path) ?? BLANK_TEX,
+          image = AssetDatabase.GetCachedIcon(path),
           text = null
         };
+        if(tmp.image == null)
+          tmp.image = DEFAULT_FILE_ICON;
         iconCache[path] = tmp;
       }
       tmp = (GUIContent)iconCache[path];
