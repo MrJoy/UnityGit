@@ -11,12 +11,16 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityGit;
 
 public class GitShell : EditorWindow {
   public const string VERSION = "0.0.1";
   public const string COPYRIGHT = "(C)Copyright 2010 MrJoy, Inc.";
 
+  protected GUIContent refreshButton = new GUIContent();
+
   public void OnEnable() {
+    refreshButton.image = ResourceLoader.GetTextureResource("UnityGitResources.Resources.Refresh.png");
     foreach(GitPanel panel in panels)
       if(panel != null)
         panel.OnEnable();
@@ -77,11 +81,17 @@ public class GitShell : EditorWindow {
 
   public void OnGUI() {
     GitPanel panel = panels[panelIndex];
-    if(forceRefresh) {
-      forceRefresh = false;
-      panel.OnRefresh();
-    }
+
     GUILayout.BeginHorizontal(EditorStyles.toolbar, ExpandWidth);
+      if(GUILayout.Button(refreshButton, EditorStyles.toolbarButton, NoExpandWidth))
+        forceRefresh = true;
+
+      if(forceRefresh) {
+        forceRefresh = false;
+        panel.OnRefresh();
+      }
+
+      ToolbarSpace();
       for(int i = 0; i < panelLabels.Length; i++) {
         if(panelLabels[i] == null) {
           ToolbarSpace();

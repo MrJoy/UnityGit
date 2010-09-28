@@ -8,7 +8,6 @@ public class GitStatusPanel : GitPanel {
                             STAGED_CHANGES_LABEL = new GUIContent("Staged Changes:"),
                             TMP_DUMMY_DIFF = new GUIContent("Lorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\n"),
                             CURRENT_BRANCH_LABEL = new GUIContent("Current Branch:"),
-                            REFRESH_BUTTON = new GUIContent("Refresh"),
                             STAGE_CHANGES_BUTTON = new GUIContent("Stage Changed"),
                             SIGN_OFF_BUTTON = new GUIContent("Sign Off"),
                             COMMIT_BUTTON = new GUIContent("Commit"),
@@ -213,9 +212,7 @@ public class GitStatusPanel : GitPanel {
     // TODO: Clear selection cache as appropriate.
     commitMessage = GUILayout.TextArea(commitMessage, GUILayout.MinHeight(editorLineHeight * 9 + 2), ExpandHeight);
     GUILayout.BeginHorizontal();
-      if(GUILayout.Button(REFRESH_BUTTON, GitStyles.CommandLeft))
-        OnRefresh();
-      GUILayout.Button(STAGE_CHANGES_BUTTON, GitStyles.CommandMid);
+      GUILayout.Button(STAGE_CHANGES_BUTTON, GitStyles.CommandLeft);
       if(GUILayout.Button(SIGN_OFF_BUTTON, GitStyles.CommandMid))
         SignOff();
       GUILayout.Button(COMMIT_BUTTON, GitStyles.CommandMid);
