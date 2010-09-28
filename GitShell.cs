@@ -86,7 +86,7 @@ public class GitShell : EditorWindow {
       if(GUILayout.Button(refreshButton, EditorStyles.toolbarButton, NoExpandWidth))
         forceRefresh = true;
 
-      if(forceRefresh) {
+      if(forceRefresh && panel != null) {
         forceRefresh = false;
         panel.OnRefresh();
       }
