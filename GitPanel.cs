@@ -128,7 +128,7 @@ public abstract class GitPanel {
       GUILayout.BeginVertical(GUILayout.Height(vState.topPaneHeight));
   }
 
-  protected static bool VerticalSplitter() {
+  protected static void VerticalSplitter() {
     GUILayout.EndVertical();
 
     float availableHeightForOnePanel = vState.availableHeight - (vState.splitterHeight + vState.minPaneHeightBottom);
@@ -152,9 +152,7 @@ public abstract class GitPanel {
     if(vState.isPaneHeightChanged) {
       if(vState.topPaneHeight < vState.minPaneHeightTop) vState.topPaneHeight = vState.minPaneHeightTop;
       if(vState.topPaneHeight >= availableHeightForOnePanel) vState.topPaneHeight = availableHeightForOnePanel;
-      return true;
-    } else {
-      return false;
+      EditorWindow.focusedWindow.Repaint();
     }
     //GUI.Label(splitterArea, NoContent, GUI.skin.box);
     //EditorGUIUtility.AddCursorRect(splitterArea, MouseCursor.ResizeVertical);
@@ -242,7 +240,7 @@ public abstract class GitPanel {
       GUILayout.BeginHorizontal(GUILayout.Width(hState.leftPaneWidth));
   }
 
-  protected static bool HorizontalSplitter() {
+  protected static void HorizontalSplitter() {
     GUILayout.EndHorizontal();
 
     float availableWidthForOnePanel = hState.availableWidth - (hState.splitterWidth + hState.minPaneWidthRight);
@@ -266,9 +264,7 @@ public abstract class GitPanel {
     if(hState.isPaneWidthChanged) {
       if(hState.leftPaneWidth < hState.minPaneWidthLeft) hState.leftPaneWidth = hState.minPaneWidthLeft;
       if(hState.leftPaneWidth >= availableWidthForOnePanel) hState.leftPaneWidth = availableWidthForOnePanel;
-      return true;
-    } else {
-      return false;
+      EditorWindow.focusedWindow.Repaint();
     }
     //GUI.Label(splitterArea, NoContent, GUI.skin.box);
     //EditorGUIUtility.AddCursorRect(splitterArea, MouseCursor.ResizeHorizontal);

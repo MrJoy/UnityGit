@@ -258,15 +258,15 @@ public class GitStatusPanel : GitPanel {
 
         BeginVerticalPanes(changesConfiguration);
           ShowUnstagedChanges();
-        if(VerticalSplitter()) Shell.Repaint();
+        VerticalSplitter();
           ShowStagedChanges();
         EndVerticalPanes();
       GUILayout.EndVertical();
-    if(HorizontalSplitter()) Shell.Repaint();
+    HorizontalSplitter();
       GUILayout.BeginVertical();
         BeginVerticalPanes(commitAndDiffConfiguration);
           ShowDiffView();
-        if(VerticalSplitter()) Shell.Repaint();
+        VerticalSplitter();
           ShowCommitMessageEditor();
         EndVerticalPanes();
       GUILayout.EndVertical();
