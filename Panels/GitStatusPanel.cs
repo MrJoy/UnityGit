@@ -27,7 +27,7 @@ public class GitStatusPanel : GitPanel {
   // Overarching state for the panel.
   private GUIContent currentBranchLabel = new GUIContent("");
   private string currentBranch = null;
-  private bool isDetachedHeadMode = false;
+  private bool isDetachedHeadMode = false, isDirty = false;
   private GitWrapper.Change[] changes = null;
 
 
@@ -42,6 +42,8 @@ public class GitStatusPanel : GitPanel {
       editorLineHeight = GUI.skin.GetStyle("textarea").CalcHeight(DUMMY_CONTENT, 100);
       boldLabelSpaceSize = SizeOfSpace(GitStyles.BoldLabel);
     }
+    if(isDirty)
+      OnRefresh();
   }
 
   public override void OnRefresh() {
@@ -67,24 +69,14 @@ public class GitStatusPanel : GitPanel {
       commitMessage += "\n" + signOffMessage;
   }
 
-  public void RefreshPath(string path) {
-    GitWrapper.Change tmp = GitWrapper.StatusForPath(path);
-    for(int i = 0; i < changes.Length; i++) {
-      if(changes[i].path == tmp.path) {
-        changes[i] = tmp;
-        break;
-      }
-    }
-  }
-
   public void StagePath(string path) {
     GitWrapper.StagePath(path);
-    RefreshPath(path);
+    isDirty = true;
   }
 
   public void UnstagePath(string path) {
     GitWrapper.UnstagePath(path);
-    RefreshPath(path);
+    isDirty = true;
   }
 
 
