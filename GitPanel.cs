@@ -152,7 +152,7 @@ public abstract class GitPanel {
     if(vState.isPaneHeightChanged) {
       if(vState.topPaneHeight < vState.minPaneHeightTop) vState.topPaneHeight = vState.minPaneHeightTop;
       if(vState.topPaneHeight >= availableHeightForOnePanel) vState.topPaneHeight = availableHeightForOnePanel;
-      EditorWindow.focusedWindow.Repaint();
+      if(EditorWindow.focusedWindow != null) EditorWindow.focusedWindow.Repaint();
     }
     //GUI.Label(splitterArea, NoContent, GUI.skin.box);
     //EditorGUIUtility.AddCursorRect(splitterArea, MouseCursor.ResizeVertical);
@@ -264,7 +264,7 @@ public abstract class GitPanel {
     if(hState.isPaneWidthChanged) {
       if(hState.leftPaneWidth < hState.minPaneWidthLeft) hState.leftPaneWidth = hState.minPaneWidthLeft;
       if(hState.leftPaneWidth >= availableWidthForOnePanel) hState.leftPaneWidth = availableWidthForOnePanel;
-      EditorWindow.focusedWindow.Repaint();
+      if(EditorWindow.focusedWindow != null) EditorWindow.focusedWindow.Repaint();
     }
     //GUI.Label(splitterArea, NoContent, GUI.skin.box);
     //EditorGUIUtility.AddCursorRect(splitterArea, MouseCursor.ResizeHorizontal);
