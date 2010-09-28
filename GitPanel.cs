@@ -2,18 +2,26 @@ using UnityEngine;
 using UnityEditor;
 
 public abstract class GitPanel {
-  public virtual bool IsDisabledForError { get { return !GitWrapper.IsWorking; } }
-
   public GitPanel(GitShell owner) { _Shell = owner; }
 
-  private GitShell _Shell = null;
-  protected virtual GitShell Shell { get { return _Shell; } }
 
+  // Principal interface...
+  public virtual bool IsDisabledForError { get { return !GitWrapper.IsWorking; } }
   public virtual void OnEnable() {}
   public virtual void OnDisable() {}
   public virtual void OnToolbarGUI() {}
   public virtual void OnRefresh() {}
   public abstract void OnGUI();
+
+
+  // Internal tools...
+  private static GUIContent DUMMY_WITH_SPACE = new GUIContent(" .");
+  private static GUIContent DUMMY_WITHOUT_SPACE = new GUIContent(".");
+
+
+  // Tools for panels...
+  private GitShell _Shell = null;
+  protected virtual GitShell Shell { get { return _Shell; } }
 
   protected static GUILayoutOption ExpandWidth = GUILayout.ExpandWidth(true),
                                    NoExpandWidth = GUILayout.ExpandWidth(false),
@@ -35,18 +43,14 @@ public abstract class GitPanel {
     }
   }
 
-  private static GUIContent DUMMY_WITH_SPACE = new GUIContent(" .");
-  private static GUIContent DUMMY_WITHOUT_SPACE = new GUIContent(".");
-
-  public static float SizeOfSpace(GUIStyle style) {
+  protected static float SizeOfSpace(GUIStyle style) {
     // TODO: Make this less expensive than I believe it to be.
     float x1 = style.CalcSize(DUMMY_WITH_SPACE).x;
     float x2 = style.CalcSize(DUMMY_WITHOUT_SPACE).x;
     return x1 - x2;
   }
 
-
-  public class VerticalPaneState {
+  protected class VerticalPaneState {
     public int id = 0;
     public bool isDraggingSplitter = false,
                 isPaneHeightChanged = false;
@@ -77,10 +81,11 @@ public abstract class GitPanel {
 
   // TODO: This makes it impossible to nest pane sets!
   private static VerticalPaneState vState;
-  public static void BeginVerticalPanes() {
+  protected static void BeginVerticalPanes() {
     BeginVerticalPanes(null);
   }
-  public static void BeginVerticalPanes(VerticalPaneState prototype) {
+
+  protected static void BeginVerticalPanes(VerticalPaneState prototype) {
     int id = GUIUtility.GetControlID(FocusType.Passive);
     vState = (VerticalPaneState)GUIUtility.GetStateObject(typeof(VerticalPaneState), id);
     if(vState.id != id) {
@@ -123,7 +128,7 @@ public abstract class GitPanel {
       GUILayout.BeginVertical(GUILayout.Height(vState.topPaneHeight));
   }
 
-  public static bool VerticalSplitter() {
+  protected static bool VerticalSplitter() {
     GUILayout.EndVertical();
 
     float availableHeightForOnePanel = vState.availableHeight - (vState.splitterHeight + vState.minPaneHeightBottom);
@@ -155,12 +160,11 @@ public abstract class GitPanel {
     //EditorGUIUtility.AddCursorRect(splitterArea, MouseCursor.ResizeVertical);
   }
 
-  public static void EndVerticalPanes() {
+  protected static void EndVerticalPanes() {
     EditorGUILayout.EndVertical();
   }
 
-
-  public class HorizontalPaneState {
+  protected class HorizontalPaneState {
     public int id = 0;
     public bool isDraggingSplitter = false,
                 isPaneWidthChanged = false;
@@ -191,10 +195,11 @@ public abstract class GitPanel {
 
   // TODO: This makes it impossible to nest pane sets!
   private static HorizontalPaneState hState;
-  public static void BeginHorizontalPanes() {
+  protected static void BeginHorizontalPanes() {
     BeginHorizontalPanes(null);
   }
-  public static void BeginHorizontalPanes(HorizontalPaneState prototype) {
+
+  protected static void BeginHorizontalPanes(HorizontalPaneState prototype) {
     int id = GUIUtility.GetControlID(FocusType.Passive);
     hState = (HorizontalPaneState)GUIUtility.GetStateObject(typeof(HorizontalPaneState), id);
     if(hState.id != id) {
@@ -237,7 +242,7 @@ public abstract class GitPanel {
       GUILayout.BeginHorizontal(GUILayout.Width(hState.leftPaneWidth));
   }
 
-  public static bool HorizontalSplitter() {
+  protected static bool HorizontalSplitter() {
     GUILayout.EndHorizontal();
 
     float availableWidthForOnePanel = hState.availableWidth - (hState.splitterWidth + hState.minPaneWidthRight);
@@ -269,7 +274,7 @@ public abstract class GitPanel {
     //EditorGUIUtility.AddCursorRect(splitterArea, MouseCursor.ResizeHorizontal);
   }
 
-  public static void EndHorizontalPanes() {
+  protected static void EndHorizontalPanes() {
     EditorGUILayout.EndHorizontal();
   }
 }
