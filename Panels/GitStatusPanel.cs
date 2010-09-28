@@ -43,8 +43,6 @@ public class GitStatusPanel : GitPanel {
     }
   }
 
-
-  // Operations.
   public override void OnRefresh() {
     currentBranch = GitWrapper.CurrentBranch;
     // TODO: Refactor detection of detached-head state into GitWrapper.
@@ -59,6 +57,8 @@ public class GitStatusPanel : GitPanel {
     changes = GitWrapper.Status;
   }
 
+
+  // Operations.
   public void SignOff() {
     // TODO: Refactor signoff operation into GitWrapper.
     string signOffMessage = "Signed-off-by: " + GitWrapper.ConfigGet("user.name") + " <" + GitWrapper.ConfigGet("user.email") + ">";
