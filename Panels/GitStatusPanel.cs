@@ -144,6 +144,16 @@ public class GitStatusPanel : GitPanel {
       if(GUI.Button(r, NoContent, NoStyle)) {
         isChanged = true;
         isSelected = !isSelected;
+        bool addToSelection = false, rangeSelection = false;
+        if(Application.platform == RuntimePlatform.OSXEditor) {
+            if(Event.current.command)
+              addToSelection = true;
+        } else if(Application.platform == RuntimePlatform.WindowsEditor) {
+            if(Event.current.control)
+              addToSelection = true;
+        }
+        if(!addToSelection)
+          selectionCache.Clear();
         selectionCache[path] = isSelected;
       }
       GUI.contentColor = c;
