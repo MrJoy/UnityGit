@@ -23,8 +23,9 @@ public abstract class GitPanel {
   protected static GUIContent NoContent = GUIContent.none;
   protected static GUIStyle NoStyle = GUIStyle.none;
 
+  protected const int SPACE_SIZE = 5;
   protected static void Space() {
-    GUILayout.Space(5);
+    GUILayout.Space(SPACE_SIZE);
   }
 
   protected static void LinkTo(GUIContent label, string url) {

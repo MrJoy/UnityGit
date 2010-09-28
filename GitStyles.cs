@@ -41,7 +41,9 @@ public static class GitStyles {
           padding = new RectOffset(1,1,1,1),
           margin = ZeroOffset,
           alignment = TextAnchor.UpperLeft,
-          imagePosition = ImagePosition.TextOnly
+          imagePosition = ImagePosition.TextOnly,
+          stretchWidth = true,
+          stretchHeight = true
         };
       }
       return _FileListBox;
