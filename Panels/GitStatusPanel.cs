@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GitStatusPanel : GitPanel {
   // Messages...
@@ -108,11 +109,55 @@ public class GitStatusPanel : GitPanel {
     return c;
   }
 
+  protected class SelectionState {
+    private HashSet<string> selection = new HashSet<string>();
+    private List<string> selectionWithOrder = new List<string>();
+
+    public void Clear() {
+      selection.Clear();
+      selectionWithOrder.Clear();
+    }
+
+    public void Select(string path) {
+      if(!selection.Contains(path)) {
+        selection.Add(path);
+        selectionWithOrder.Add(path);
+      }
+    }
+
+    public void Unselect(string path) {
+      if(selection.Contains(path)) {
+        selection.Remove(path);
+        selectionWithOrder.Remove(path);
+      }
+    }
+
+    public bool IsSelected(string path) {
+      return selection.Contains(path);
+    }
+
+    public void Set(string path, bool status) {
+      if(status)
+        Select(path);
+      else
+        Unselect(path);
+    }
+
+    public string Last {
+      get {
+        if(selectionWithOrder.Count > 0)
+          return selectionWithOrder[selectionWithOrder.Count - 1];
+        else
+          return null;
+      }
+    }
+  }
+
   [System.NonSerialized]
   private Hashtable iconCache = new Hashtable();
-  protected bool ShowFile(int id, Hashtable selectionCache, string path, GitWrapper.ChangeType status, WholeFileCommand cmd) {
+  protected bool ShowFile(int id, SelectionState selectionCache, string path, GitWrapper.ChangeType status, WholeFileCommand cmd) {
     bool isChanged = false;
-    bool isSelected = selectionCache.ContainsKey(path) ? (bool)selectionCache[path] : false;
+    bool isSelected = selectionCache.IsSelected(path);
     bool hasFocus = (GUIUtility.hotControl == id);
     GUIStyle style = isSelected ? (hasFocus ? GitStyles.FileLabelSelected : GitStyles.FileLabelSelectedUnfocused) : GitStyles.FileLabel;
 
@@ -131,8 +176,7 @@ public class GitStatusPanel : GitPanel {
       if(GUILayout.Button(tmp, style, ICON_WIDTH, ITEM_HEIGHT)) {
         isChanged = true;
         cmd(path);
-        if(selectionCache.ContainsKey(path))
-          selectionCache.Remove(path);
+        selectionCache.Unselect(path);
       }
       Color c = GUI.contentColor;
       GUI.contentColor = ColorForChangeType(status);
@@ -145,23 +189,24 @@ public class GitStatusPanel : GitPanel {
         isChanged = true;
         isSelected = !isSelected;
         bool addToSelection = false, rangeSelection = false;
-        if(Application.platform == RuntimePlatform.OSXEditor) {
-            if(Event.current.command)
-              addToSelection = true;
-        } else if(Application.platform == RuntimePlatform.WindowsEditor) {
-            if(Event.current.control)
-              addToSelection = true;
-        }
-        if(!addToSelection)
+        if(Event.current.command && Application.platform == RuntimePlatform.OSXEditor)
+          addToSelection = true;
+        else if(Event.current.control && Application.platform == RuntimePlatform.WindowsEditor)
+          addToSelection = true;
+        if(Event.current.shift)
+          rangeSelection = true;
+
+        if(!addToSelection && !rangeSelection)
           selectionCache.Clear();
-        selectionCache[path] = isSelected;
+        selectionCache.Set(path, isSelected);
+        // TODO: For range selection we need the list of files..
       }
       GUI.contentColor = c;
     GUILayout.EndHorizontal();
     return isChanged;
   }
 
-  protected Vector2 FileListView(GUIContent label, Vector2 scrollPos, FilterDelegate filter, ChangeTypeDelegate changeTypeFetcher, WholeFileCommand cmd, Hashtable selectionCache) {
+  protected Vector2 FileListView(GUIContent label, Vector2 scrollPos, FilterDelegate filter, ChangeTypeDelegate changeTypeFetcher, WholeFileCommand cmd, SelectionState selectionCache) {
     GUILayout.Label(label, GitStyles.BoldLabel, NoExpandWidth);
     int id = GUIUtility.GetControlID(FocusType.Passive);
     bool hasFocus = GUIUtility.hotControl == id;
@@ -202,13 +247,13 @@ public class GitStatusPanel : GitPanel {
 
 
   // Sub-views.
-  private Hashtable workingSetSelectionCache = new Hashtable();  
+  private SelectionState workingSetSelectionCache = new SelectionState();
   private Vector2 workingScrollPos;
   protected void ShowUnstagedChanges() {
     workingScrollPos = FileListView(UNSTAGED_CHANGES_LABEL, workingScrollPos, WorkingSetFilter, WorkingSetFetcher, StagePath, workingSetSelectionCache);
   }
 
-  private Hashtable indexSetSelectionCache = new Hashtable();
+  private SelectionState indexSetSelectionCache = new SelectionState();
   private Vector2 indexScrollPos;
   protected void ShowStagedChanges() {
     indexScrollPos = FileListView(STAGED_CHANGES_LABEL, indexScrollPos, IndexSetFilter, IndexSetFetcher, UnstagePath, indexSetSelectionCache);
