@@ -177,12 +177,11 @@ public static class GitWrapper {
         string[] records = tmp.Split('\0');
         output = new Change[records.Length];
         for(int i = 0; i < records.Length; i++) {
-          char indexStatusInfo = records[i][0];
-          char workingStatusInfo = records[i][1];
-          string path = records[i].Substring(3);
-          output[i].indexStatus = ChangeTypeFromChar(indexStatusInfo);
-          output[i].workingStatus = ChangeTypeFromChar(workingStatusInfo);
-          output[i].path = path;
+          output[i] = new Change() {
+            indexStatus = ChangeTypeFromChar(records[i][0]),
+            workingStatus = ChangeTypeFromChar(records[i][1]),
+            path = records[i].Substring(3)
+          };
         }
       } catch {
         // TODO: Hrm....
