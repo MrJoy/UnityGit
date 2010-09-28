@@ -1,9 +1,10 @@
+using UnityEditor;
 using System;
 using System.Collections.Generic;
 
 public static class GitWrapper {
   private static bool _isWorking = true;
-  public static bool IsWorking { get { return _isWorking; } }
+  public static bool IsWorking { get { return _isWorking && (EditorSettings.externalVersionControl == ExternalVersionControl.Generic); } }
 
   public static string CurrentBranch {
     get {
