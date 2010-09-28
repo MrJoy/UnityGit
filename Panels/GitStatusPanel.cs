@@ -66,7 +66,15 @@ public class GitStatusPanel : GitPanel {
       commitMessage += "\n" + signOffMessage;
   }
 
-  public delegate void WholeFileCommand(string path);
+  public void RefreshPath(string path) {
+    GitWrapper.Change tmp = GitWrapper.StatusForPath(path);
+    for(int i = 0; i < changes.Length; i++) {
+      if(changes[i].path == tmp.path) {
+        changes[i] = tmp;
+        break;
+      }
+    }
+  }
 
   public void StagePath(string path) {
     GitWrapper.StagePath(path);
@@ -80,6 +88,10 @@ public class GitStatusPanel : GitPanel {
 
 
   // Helpers.
+  protected delegate void WholeFileCommand(string path);
+  protected delegate bool FilterDelegate(GitWrapper.Change change);
+  protected delegate GitWrapper.ChangeType ChangeTypeDelegate(GitWrapper.Change change);
+
   public Color ColorForChangeType(GitWrapper.ChangeType status) {
     Color c = Color.red;
     switch(status) {
@@ -94,16 +106,6 @@ public class GitStatusPanel : GitPanel {
         break;
     }
     return c;
-  }
-
-  public void RefreshPath(string path) {
-    GitWrapper.Change tmp = GitWrapper.StatusForPath(path);
-    for(int i = 0; i < changes.Length; i++) {
-      if(changes[i].path == tmp.path) {
-        changes[i] = tmp;
-        break;
-      }
-    }
   }
 
   [System.NonSerialized]
@@ -149,9 +151,6 @@ public class GitStatusPanel : GitPanel {
     return isChanged;
   }
 
-  protected delegate bool FilterDelegate(GitWrapper.Change change);
-  protected delegate GitWrapper.ChangeType ChangeTypeDelegate(GitWrapper.Change change);
-
   protected Vector2 FileListView(GUIContent label, Vector2 scrollPos, FilterDelegate filter, ChangeTypeDelegate changeTypeFetcher, WholeFileCommand cmd, Hashtable selectionCache) {
     GUILayout.Label(label, GitStyles.BoldLabel, NoExpandWidth);
     int id = GUIUtility.GetControlID(FocusType.Passive);
@@ -190,6 +189,7 @@ public class GitStatusPanel : GitPanel {
   protected GitWrapper.ChangeType IndexSetFetcher(GitWrapper.Change change) {
     return change.indexStatus;
   }
+
 
   // Sub-views.
   private Hashtable workingSetSelectionCache = new Hashtable();  
@@ -232,18 +232,15 @@ public class GitStatusPanel : GitPanel {
     minPaneHeightTop = 100,
     minPaneHeightBottom = 100
   };
-
   private VerticalPaneState commitAndDiffConfiguration = new VerticalPaneState() {
     minPaneHeightTop = 75,
     minPaneHeightBottom = 180
   };
-
   private HorizontalPaneState overallConfiguration = new HorizontalPaneState() {
     minPaneWidthLeft = 150,
     minPaneWidthRight = 400,
     initialLeftPaneWidth = 220
   };
-
   public override void OnGUI() {
     Init();
 
