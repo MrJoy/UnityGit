@@ -113,6 +113,12 @@ public class GitStatusPanel : GitPanel {
     private HashSet<string> selection = new HashSet<string>();
     private List<string> selectionWithOrder = new List<string>();
 
+    public int Count {
+      get {
+        return selection.Count;
+      }
+    }
+
     public void Clear() {
       selection.Clear();
       selectionWithOrder.Clear();
@@ -280,7 +286,11 @@ public class GitStatusPanel : GitPanel {
 
   protected void ShowDiffView() {
     // TODO: Implement me!!!!
-    GUILayout.Box(TMP_DUMMY_DIFF, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
+    if(workingSetSelectionCache.Count == 1) {
+      GUIContent tmp = new GUIContent(TMP_DUMMY_DIFF.text + "\n" + workingSetSelectionCache.Last);
+      GUILayout.Box(tmp, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
+    } else
+      GUILayout.Box(NoContent, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
   }
 
   private VerticalPaneState changesConfiguration = new VerticalPaneState() {
