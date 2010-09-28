@@ -173,7 +173,7 @@ public static class GitWrapper {
     get {
       Change[] output = null;
       try {
-        string tmp = ShellHelpers.OutputFromCommand("git", "status --porcelain -z");
+        string tmp = ShellHelpers.OutputFromCommand("git", "status --porcelain --untracked-files=all -z");
         string[] records = tmp.Split('\0');
         output = new Change[records.Length];
         for(int i = 0; i < records.Length; i++) {
