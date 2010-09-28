@@ -204,11 +204,15 @@ public static class GitWrapper {
   }
 
   public static void StagePath(string path) {
-    UnityEngine.Debug.Log("<" + ShellHelpers.OutputFromCommand("git", "add --ignore-errors -- " + QuotePath(path)) + ">");
+    string tmp = ShellHelpers.OutputFromCommand("git", "add --ignore-errors -- " + QuotePath(path));
+    if(tmp != "")
+      UnityEngine.Debug.Log("<" + tmp + ">");
   }
 
   public static void UnstagePath(string path) {
-    UnityEngine.Debug.Log("<" + ShellHelpers.OutputFromCommand("git", "reset HEAD -- " + QuotePath(path)) + ">");
+    string tmp = ShellHelpers.OutputFromCommand("git", "reset HEAD -- " + QuotePath(path));
+    if(tmp != "")
+      UnityEngine.Debug.Log("<" + tmp + ">");
   }
 
   public static string ConfigGet(string key) {
