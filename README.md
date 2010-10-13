@@ -26,9 +26,10 @@ If you already use git for your project, then just add this as a submodule.
 
 # COMPATIBILITY
 
-* Unity 2.6.x: Untested.
-* Unity/iPhone 1.x: Untested.
-* Unity 3.0.0: Works.
+Requires Unity 3.0+, and will probably wind up requiring Git 1.7.3+ although at
+this stage its usage of Git isn't terribly sophisticated.
+
+It will not work with Unity 2.x, or Unity/iPhone 1.x.
 
 
 # LICENSE
@@ -40,7 +41,7 @@ Dual licensed under the terms of the MIT X11 or GNU GPL, as per the original cod
 
 * Provide options for setting up a project under git.
 * Configurable path to git/gitk binaries.
-** Option to substitute gitx for gitk/git-gui.
+* Option to substitute gitx for gitk/git-gui.
 * Don't require a manual symlink in /usr/bin for gitk.
 * Windows support.
 * Actual GUI interface for various git operations.
