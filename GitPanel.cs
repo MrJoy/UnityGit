@@ -38,9 +38,12 @@ public abstract class GitPanel {
 
   protected static void LinkTo(GUIContent label, string url) {
     // TODO: Find a way to make this underlined and have the expected cursor.
+    Color c = GUI.contentColor;
+    GUI.contentColor = GitStyles.LinkColor;
     if(GUILayout.Button(label, GitStyles.Link)) {
       Application.OpenURL(url);
     }
+    GUI.contentColor = c;
   }
 
   protected static float SizeOfSpace(GUIStyle style) {
