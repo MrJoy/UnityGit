@@ -11,7 +11,6 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityGit;
 
 public class GitShell : EditorWindow {
   public const string VERSION = "0.0.1";
@@ -20,7 +19,7 @@ public class GitShell : EditorWindow {
   protected GUIContent refreshButton = new GUIContent();
 
   public void OnEnable() {
-    refreshButton.image = ResourceLoader.GetTextureResource("UnityGitResources.Resources.Refresh.png");
+    refreshButton.image = AssetDatabase.LoadAssetAtPath("Assets/Editor/UnityGit/Resources/Refresh.png", typeof(Texture2D)) as Texture2D;
     foreach(GitPanel panel in panels)
       if(panel != null)
         panel.OnEnable();
