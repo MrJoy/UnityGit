@@ -42,8 +42,10 @@ public class GitStatusPanel : GitPanel {
       editorLineHeight = GUI.skin.GetStyle("textarea").CalcHeight(DUMMY_CONTENT, 100);
       boldLabelSpaceSize = SizeOfSpace(GitStyles.BoldLabel);
     }
-    if(isDirty)
+    if(isDirty) {
       OnRefresh();
+      isDirty = false;
+    }
   }
 
   public override void OnRefresh() {
