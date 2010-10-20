@@ -18,6 +18,17 @@ public static class GitWrapper {
     }
   }
 
+  public static string GetDiff(string path, bool wordDiff) {
+    try {
+      string diffParams = wordDiff ? "--word-diff=porcelain " : "";
+      return ShellHelpers.OutputFromCommand("git", "diff " + diffParams + "-- " + QuotePath(path));
+    } catch {
+      _isWorking = false;
+      return null;
+    }
+    
+  }
+  
   public enum RefKind {
     Branch, TrackingBranch, Tag, Other
   }

@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityGit.DiffView;
 
 public class GitStatusPanel : GitPanel {
   // Messages...
   private static GUIContent UNSTAGED_CHANGES_LABEL = new GUIContent("Unstaged Changes:"),
                             STAGED_CHANGES_LABEL = new GUIContent("Staged Changes:"),
-                            TMP_DUMMY_DIFF = new GUIContent("Lorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\nLorem ipsum dolor sit amar blah blah blah blah blah, blah blah blah.\n"),
                             CURRENT_BRANCH_LABEL = new GUIContent("Current Branch:"),
                             STAGE_CHANGES_BUTTON = new GUIContent("Stage Changed"),
                             SIGN_OFF_BUTTON = new GUIContent("Sign Off"),
@@ -278,11 +278,19 @@ public class GitStatusPanel : GitPanel {
     GUILayout.EndHorizontal();
   }
 
+  private Vector2 scrollPosition;
+  private string lastSelectedPath = null;
+  private string lastDiff = null;
   protected void ShowDiffView() {
     // TODO: Implement me!!!!
     if(workingSetSelectionCache.Count == 1) {
-      GUIContent tmp = new GUIContent(TMP_DUMMY_DIFF.text + "\n" + workingSetSelectionCache.Last);
-      GUILayout.Box(tmp, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
+      if(workingSetSelectionCache.Last != lastSelectedPath) {
+        lastSelectedPath = workingSetSelectionCache.Last;
+        lastDiff = GitWrapper.GetDiff(lastSelectedPath, true);
+      }
+      GUILayout.BeginHorizontal(GitStyles.FileListBox);
+        scrollPosition = DiffGUI.ScrollableWordDiff(scrollPosition, lastDiff, false);
+      GUILayout.EndHorizontal();
     } else
       GUILayout.Box(NoContent, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
   }
