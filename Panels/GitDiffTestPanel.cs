@@ -457,12 +457,33 @@ public class GitDiffTestPanel : GitPanel {
     }
   }
 
-  protected void ShowDiffView() {
-//    GUILayout.Box(tmp, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
+  protected static void WordDiffDisplay(string content) {
+    int id = GUIUtility.GetControlID(FocusType.Passive);
+    DiffViewState state = (DiffViewState)GUIUtility.GetStateObject(typeof(DiffViewState), id);
+    state.content = content;
+
+    DiffViewState.Line[] lines = state.lines;
+
+    Color oldColor = GUI.contentColor;
+    GUILayout.BeginVertical();
+      foreach(DiffViewState.Line line in lines) {
+        GUILayout.BeginHorizontal();
+          for(int i = 0; i < line.segments.Length; i++) {
+            GUI.contentColor = line.colors[i];
+            GUILayout.Label(line.segments[i], GitStyles.WhiteLabel, NoExpandWidth);
+          }
+        GUILayout.EndHorizontal();
+        GUI.contentColor = oldColor;
+      }
+    GUILayout.EndVertical();
+//    GUILayout.Box(NoContent, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
   }
 
+  private Vector2 scrollPosition;
   public override void OnGUI() {
-    ShowDiffView();
+    scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GitStyles.FileListBox);
+      WordDiffDisplay(TEST_DIFF);
+    EditorGUILayout.EndScrollView();
   }
 
   // Base constructor
