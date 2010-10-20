@@ -10,6 +10,18 @@ namespace UnityGit.DiffView.State {
       get { return _header ?? Styles.Header; }
     }
 
+    private GUIStyle _leftFile = null;
+    public GUIStyle leftFile {
+      set { if(_leftFile != value) { _leftFile = value; isDirty = true; } }
+      get { return _leftFile ?? Styles.LeftFile; }
+    }
+
+    private GUIStyle _rightFile = null;
+    public GUIStyle rightFile {
+      set { if(_rightFile != value) { _rightFile = value; isDirty = true; } }
+      get { return _rightFile ?? Styles.RightFile; }
+    }
+
     private GUIStyle _markerPosition = null;
     public GUIStyle markerPosition {
       set { if(_markerPosition != value) { _markerPosition = value; isDirty = true; } }

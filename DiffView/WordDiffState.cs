@@ -2,6 +2,12 @@ using UnityEngine;
 
 namespace UnityGit.DiffView.State {
   public class WordDiffState : BaseState {
+    private bool _showFileNames = true;
+    public bool showFileNames {
+      set { if(_showFileNames != value) { _showFileNames = value; isDirty = true; } }
+      get { return _showFileNames; }
+    }
+
     public override void OnRefresh() {
       isDirty = false;
       if(content == null) {
@@ -20,8 +26,12 @@ namespace UnityGit.DiffView.State {
         switch(state) {
           case 0: // Expecting file header info, OR possibly a segment marker.
             selector = rawLine[0];
-            if(selector == '@')
-              state = 1; // Got a segment marker, so handle accordingly.
+            switch(selector) {
+              case '@': state = 1; break; // Got a segment marker, so handle accordingly.
+              case '-': state = 7; break; // Left file indicator.
+              case '+': state = 8; break; // Left file indicator.
+              default: break; // Any other content.  Should really just be the diff commandline.
+            }
             break;
           case 1: // Shouldn't happen...
             Debug.LogError("Uh, this should not have happened.");
@@ -72,6 +82,20 @@ namespace UnityGit.DiffView.State {
           case 6: // Removed content segment.
             builder.AddSegment(removal, rawLine.Substring(1));
             state = 2;
+            break;
+          case 7: // Left-file indicator.
+            if(_showFileNames) {
+              builder.AddSegment(leftFile, rawLine);
+              builder.CommitLine();
+            }
+            state = 0;
+            break;
+          case 8: // Right-file indicator.
+            if(_showFileNames) {
+              builder.AddSegment(rightFile, rawLine);
+              builder.CommitLine();
+            }
+            state = 0;
             break;
         }
       }

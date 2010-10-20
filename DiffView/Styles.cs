@@ -110,8 +110,20 @@ namespace UnityGit.DiffView {
       get {
         if(_LeftFileNormal == null) {
           _LeftFileNormal = new GUIStyle("Label") {
+            normal = new GUIStyleState() {
+              textColor = Color.red * 0.5f + Color.black * 0.5f
+            },
+            margin = ZeroOffset,
+            padding = ZeroOffset,
+            stretchWidth = false,
+            alignment = TextAnchor.MiddleLeft,
+            font = EditorStyles.largeLabel.font,
+            fontStyle = FontStyle.Bold
           };
           _LeftFilePro = new GUIStyle(_LeftFileNormal) {
+            normal = new GUIStyleState() {
+              textColor = Color.red * 0.75f + Color.black * 0.25f
+            }
           };
         }
         return IsProSkin ? _LeftFilePro : _LeftFileNormal;
@@ -122,8 +134,20 @@ namespace UnityGit.DiffView {
       get {
         if(_RightFileNormal == null) {
           _RightFileNormal = new GUIStyle("Label") {
+            normal = new GUIStyleState() {
+              textColor = Color.green * 0.5f + Color.black * 0.5f
+            },
+            margin = ZeroOffset,
+            padding = ZeroOffset,
+            stretchWidth = false,
+            alignment = TextAnchor.MiddleLeft,
+            font = EditorStyles.largeLabel.font,
+            fontStyle = FontStyle.Bold
           };
           _RightFilePro = new GUIStyle(_RightFileNormal) {
+            normal = new GUIStyleState() {
+              textColor = Color.green * 0.75f + Color.black * 0.25f
+            }
           };
         }
         return IsProSkin ? _RightFilePro : _RightFileNormal;
