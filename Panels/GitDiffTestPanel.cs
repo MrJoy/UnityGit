@@ -313,8 +313,7 @@ public class GitDiffTestPanel : GitPanel {
       foreach(Line line in lines) {
         GUILayout.BeginHorizontal();
           for(int i = 0; i < line.segments.Length; i++) {
-            GUI.contentColor = line.colors[i];
-            GUILayout.Label(line.segments[i], GitStyles.WhiteLabel, NoExpandWidth);
+            GUILayout.Label(line.segments[i], line.styles[i], NoExpandWidth);
           }
         GUILayout.EndHorizontal();
         GUI.contentColor = oldColor;

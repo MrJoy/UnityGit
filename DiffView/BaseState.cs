@@ -4,34 +4,40 @@ namespace UnityGit.DiffView.State {
   public abstract class BaseState {
     protected bool isDirty = false;
 
-    private Color _header = Color.white;
-    public Color header {
+    private GUIStyle _header = null;
+    public GUIStyle header {
       set { if(_header != value) { _header = value; isDirty = true; } }
-      get { return _header; }
+      get { return _header ?? Styles.Header; }
     }
 
-    private Color _marker = Color.cyan;
-    public Color marker {
-      set { if(_marker != value) { _marker = value; isDirty = true; } }
-      get { return _marker; }
+    private GUIStyle _markerPosition = null;
+    public GUIStyle markerPosition {
+      set { if(_markerPosition != value) { _markerPosition = value; isDirty = true; } }
+      get { return _markerPosition ?? Styles.MarkerPosition; }
     }
 
-    private Color _unchanged = Color.black;
-    public Color unchanged {
-      set { if(_unchanged != value) { _unchanged = value; isDirty = true; } }
-      get { return _unchanged; }
+    private GUIStyle _markerContext = null;
+    public GUIStyle markerContext {
+      set { if(_markerContext != value) { _markerContext = value; isDirty = true; } }
+      get { return _markerContext ?? Styles.MarkerContext; }
     }
 
-    private Color _add = Color.green;
-    public Color add {
-      set { if(_add != value) { _add = value; isDirty = true; } }
-      get { return _add; }
+    private GUIStyle _normal = null;
+    public GUIStyle normal {
+      set { if(_normal != value) { _normal = value; isDirty = true; } }
+      get { return _normal ?? Styles.Normal; }
     }
 
-    private Color _remove = Color.red;
-    public Color remove {
-      set { if(_remove != value) { _remove = value; isDirty = true; } }
-      get { return _remove; }
+    private GUIStyle _addition = null;
+    public GUIStyle addition {
+      set { if(_addition != value) { _addition = value; isDirty = true; } }
+      get { return _addition ?? Styles.Addition; }
+    }
+
+    private GUIStyle _removal = null;
+    public GUIStyle removal {
+      set { if(_removal != value) { _removal = value; isDirty = true; } }
+      get { return _removal ?? Styles.Removal; }
     }
 
     private string _content;

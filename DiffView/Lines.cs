@@ -6,24 +6,28 @@ using System.Collections.Generic;
 namespace UnityGit.DiffView.State {
   public class Line {
     public string[] segments;
-    public Color[] colors;
+    public GUIStyle[] styles;
   }
 
   public class LinesBuilder {
     private List<Line> linesTmp = new List<Line>();
     private List<string> segmentsTmp = new List<string>();
-    private List<Color> colorsTmp = new List<Color>();
+    private List<GUIStyle> stylesTmp = new List<GUIStyle>();
 
-    public void AddSegment(Color c, string s) {
+    public void AddSegment(GUIStyle c, string s) {
       segmentsTmp.Add(s);
-      colorsTmp.Add(c);
+      stylesTmp.Add(c);
     }
 
     public void CommitLine() {
-      linesTmp.Add(new Line() {
-        segments = segmentsTmp.ToArray(),
-        colors = colorsTmp.ToArray()
-      });
+      if(segmentsTmp.Count > 0) {
+        linesTmp.Add(new Line() {
+          segments = segmentsTmp.ToArray(),
+          styles = stylesTmp.ToArray()
+        });
+        stylesTmp.Clear();
+        segmentsTmp.Clear();
+      }
     }
 
     public Line[] ToArray() {

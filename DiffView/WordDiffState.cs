@@ -49,8 +49,8 @@ namespace UnityGit.DiffView.State {
             break;
           case 1: // Expecting segment marker.
             int splitPoint = rawLine.IndexOf("@@", 2);
-            builder.AddSegment(marker, rawLine.Substring(0, splitPoint + 2));
-            builder.AddSegment(header, rawLine.Substring(splitPoint + 2));
+            builder.AddSegment(markerPosition, rawLine.Substring(0, splitPoint + 2));
+            builder.AddSegment(markerContext, rawLine.Substring(splitPoint + 2));
             builder.CommitLine();
             state = 2;
             break;
@@ -62,15 +62,15 @@ namespace UnityGit.DiffView.State {
             state = 2;
             break;
           case 4: // Unchanged content segment.
-            builder.AddSegment(unchanged, rawLine.Substring(1));
+            builder.AddSegment(normal, rawLine.Substring(1));
             state = 2;
             break;
           case 5: // Added content segment.
-            builder.AddSegment(add, rawLine.Substring(1));
+            builder.AddSegment(addition, rawLine.Substring(1));
             state = 2;
             break;
           case 6: // Removed content segment.
-            builder.AddSegment(remove, rawLine.Substring(1));
+            builder.AddSegment(removal, rawLine.Substring(1));
             state = 2;
             break;
         }
