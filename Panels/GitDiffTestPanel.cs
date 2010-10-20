@@ -302,38 +302,12 @@ public class GitDiffTestPanel : GitPanel {
     "       }\n" +
     "~\n";
 
-  protected static void WordDiffDisplay(string content, bool showFileNames) {
-    int id = GUIUtility.GetControlID(FocusType.Passive);
-    WordDiffState state = (WordDiffState)GUIUtility.GetStateObject(typeof(WordDiffState), id);
-    state.content = content;
-    state.showFileNames = showFileNames;
-
-    Line[] lines = state.lines;
-
-    Color oldColor = GUI.contentColor;
-    GUILayout.BeginVertical();
-      foreach(Line line in lines) {
-        GUILayout.BeginHorizontal();
-          for(int i = 0; i < line.segments.Length; i++) {
-            GUILayout.Label(line.segments[i], line.styles[i], Width(line.widths[i]), NoExpandWidth);
-          }
-        GUILayout.EndHorizontal();
-        GUI.contentColor = oldColor;
-      }
-    GUILayout.EndVertical();
-//    GUILayout.Box(NoContent, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
-  }
-
   private Vector2 scrollPosition;
   private bool showFileNames = true;
   public override void OnGUI() {
     showFileNames = GUILayout.Toggle(showFileNames, "Show left/right filename indicators?");
     GUILayout.BeginHorizontal(GitStyles.FileListBox);
-      scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-        GUILayout.BeginVertical(Styles.Padding);
-          WordDiffDisplay(TEST_DIFF, showFileNames);
-        GUILayout.EndVertical();
-      EditorGUILayout.EndScrollView();
+      scrollPosition = DiffGUI.ScrollableWordDiff(scrollPosition, TEST_DIFF, showFileNames);
     GUILayout.EndHorizontal();
   }
 
