@@ -28,6 +28,8 @@ public abstract class GitPanel {
                                    ExpandHeight = GUILayout.ExpandHeight(true),
                                    NoExpandHeight = GUILayout.ExpandHeight(false);
 
+  protected static GUILayoutOption Width(float w) { return GUILayout.Width(w); }
+
   protected static GUIContent NoContent = GUIContent.none;
   protected static GUIStyle NoStyle = GUIStyle.none;
 

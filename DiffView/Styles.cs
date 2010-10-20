@@ -3,6 +3,9 @@ using UnityEditor;
 
 namespace UnityGit.DiffView {
   public static class Styles {
+    private static RectOffset ZeroOffset = new RectOffset(0,0,0,0);
+    // TODO: Suss out some sort of monospaced font here.  >.<
+
     /* Template for styles:
     private static GUIStyle _@FOO@Pro = null, _@FOO@Normal = null;
     public static GUIStyle @FOO@ {
@@ -38,8 +41,10 @@ namespace UnityGit.DiffView {
             normal = new GUIStyleState() {
               textColor = Color.blue
             },
+            margin = ZeroOffset,
+            padding = ZeroOffset,
             stretchWidth = false,
-            alignment = TextAnchor.MiddleCenter,
+            alignment = TextAnchor.MiddleLeft,
             font = EditorStyles.largeLabel.font,
             fontStyle = FontStyle.Bold
           };
@@ -60,8 +65,10 @@ namespace UnityGit.DiffView {
             normal = new GUIStyleState() {
               textColor = Color.magenta * 0.5f + Color.black * 0.5f
             },
+            margin = ZeroOffset,
+            padding = ZeroOffset,
             stretchWidth = false,
-            alignment = TextAnchor.MiddleCenter,
+            alignment = TextAnchor.MiddleLeft,
             font = EditorStyles.largeLabel.font,
             fontStyle = FontStyle.Bold
           };
@@ -82,8 +89,10 @@ namespace UnityGit.DiffView {
             normal = new GUIStyleState() {
               textColor = Color.magenta * 0.75f + Color.black * 0.25f
             },
+            margin = ZeroOffset,
+            padding = ZeroOffset,
             stretchWidth = false,
-            alignment = TextAnchor.MiddleCenter,
+            alignment = TextAnchor.MiddleLeft,
             font = EditorStyles.largeLabel.font,
             fontStyle = FontStyle.Bold
           };
@@ -125,8 +134,10 @@ namespace UnityGit.DiffView {
       get {
         if(_NormalNormal == null) {
           _NormalNormal = new GUIStyle("Label") {
+            margin = ZeroOffset,
+            padding = ZeroOffset,
             stretchWidth = false,
-            alignment = TextAnchor.MiddleCenter,
+            alignment = TextAnchor.MiddleLeft
           };
           _NormalPro = new GUIStyle(_NormalNormal) {
           };
@@ -142,9 +153,10 @@ namespace UnityGit.DiffView {
             normal = new GUIStyleState() {
               textColor = Color.green * 0.5f + Color.black * 0.5f
             },
+            margin = ZeroOffset,
+            padding = ZeroOffset,
             stretchWidth = false,
-            alignment = TextAnchor.MiddleCenter,
-            fontStyle = FontStyle.Bold
+            alignment = TextAnchor.MiddleLeft
           };
           _AdditionPro = new GUIStyle(_AdditionNormal) {
             normal = new GUIStyleState() {
@@ -163,9 +175,10 @@ namespace UnityGit.DiffView {
             normal = new GUIStyleState() {
               textColor = Color.red * 0.5f + Color.black * 0.5f
             },
+            margin = ZeroOffset,
+            padding = ZeroOffset,
             stretchWidth = false,
-            alignment = TextAnchor.MiddleCenter,
-            fontStyle = FontStyle.Bold
+            alignment = TextAnchor.MiddleLeft
           };
           _RemovalPro = new GUIStyle(_RemovalNormal) {
             normal = new GUIStyleState() {
@@ -181,6 +194,18 @@ namespace UnityGit.DiffView {
       get {
         return EditorStyles.whiteLargeLabel.normal.textColor == Color.black;
       }
+    }
+
+    private static string MARKER_STRING = ".";
+    private static GUIContent MARKER_CONTENT = new GUIContent(MARKER_STRING);
+
+    public static float TrueWidth(GUIStyle s, string content) {
+      // NOTE: This is an ugly hack because Unity is very aggressive about 
+      // NOTE: clipping trailing space from a label.  BAH!
+      GUIContent tmp = new GUIContent(content + MARKER_STRING);
+      Vector2 markerSize = s.CalcSize(MARKER_CONTENT);
+      Vector2 markedContentSize = s.CalcSize(tmp);
+      return markedContentSize.x - markerSize.x;
     }
   }
 }
