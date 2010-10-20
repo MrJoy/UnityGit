@@ -1,5 +1,5 @@
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 public static class GitStyles {
   private static RectOffset ZeroOffset = new RectOffset(0,0,0,0);

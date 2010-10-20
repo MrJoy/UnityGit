@@ -1,6 +1,4 @@
 using UnityEditor;
-using UnityEngine;
-using System.Collections;
 
 public class GitLaunchers {
   [MenuItem("Tools/Git/Commit Editor")]

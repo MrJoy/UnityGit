@@ -1,6 +1,6 @@
-using UnityEditor;
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 
 public static class GitWrapper {
   private static bool _isWorking = true;

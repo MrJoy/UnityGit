@@ -1,5 +1,5 @@
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 public class GitAboutPanel : GitPanel {
   public override bool IsDisabledForError { get { return false; } }

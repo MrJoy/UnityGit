@@ -6,11 +6,9 @@
 //-----------------------------------------------------------------
 // Unity editor extension for Git integration.
 //-----------------------------------------------------------------
+using System;
 using UnityEditor;
 using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
 public class GitShell : EditorWindow {
   public const string VERSION = "0.0.1";

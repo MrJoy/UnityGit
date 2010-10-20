@@ -1,10 +1,6 @@
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
-using System.Collections.Generic;
-
 using UnityGit.DiffView;
-using UnityGit.DiffView.State;
+
 
 public class GitDiffTestPanel : GitPanel {
   private static string TEST_DIFF = 

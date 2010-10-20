@@ -1,7 +1,5 @@
-using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace UnityGit.DiffView.State {
   public class Line {

@@ -1,5 +1,5 @@
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 public class GitRefsPanel : GitPanel {
   protected GitWrapper.Ref[] refs = null;

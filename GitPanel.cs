@@ -1,5 +1,5 @@
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 public abstract class GitPanel {
   public GitPanel(GitShell owner) { _Shell = owner; }

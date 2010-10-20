@@ -1,7 +1,7 @@
-using UnityEngine;
 using UnityEditor;
-
+using UnityEngine;
 using UnityGit.DiffView.State;
+
 
 namespace UnityGit.DiffView {
   public static class DiffGUI {
