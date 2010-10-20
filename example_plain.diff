@@ -1,0 +1,156 @@
+diff --git a/GitPanel.cs b/GitPanel.cs
+index d408a19..8e9863a 100644
+--- a/GitPanel.cs
++++ b/GitPanel.cs
+@@ -38,9 +38,12 @@ public abstract class GitPanel {
+ 
+   protected static void LinkTo(GUIContent label, string url) {
+     // TODO: Find a way to make this underlined and have the expected cursor.
++    Color c = GUI.contentColor;
++    GUI.contentColor = GitStyles.LinkColor;
+     if(GUILayout.Button(label, GitStyles.Link)) {
+       Application.OpenURL(url);
+     }
++    GUI.contentColor = c;
+   }
+ 
+   protected static float SizeOfSpace(GUIStyle style) {
+diff --git a/GitStyles.cs b/GitStyles.cs
+index dd267c4..9f317ac 100644
+--- a/GitStyles.cs
++++ b/GitStyles.cs
+@@ -4,21 +4,57 @@ using UnityEditor;
+ public static class GitStyles {
+   private static RectOffset ZeroOffset = new RectOffset(0,0,0,0);
+ 
+-  public static Color TextColor = new Color(0f, 0f, 0f, 1f);
+-  public static Color ErrorColor = new Color(0.5f, 0f, 0f, 1f);
+-  public static Color LinkColor = new Color(0f, 0f, 1f, 1f);
++  public static class NormalSkinColors {
++    public static Color TextColor = new Color(0f, 0f, 0f, 1f);
++    public static Color ErrorColor = new Color(0.5f, 0f, 0f, 1f);
++    public static Color LinkColor = new Color(0f, 0f, 1f, 1f);
++
++    // Change status colors:
++    public static Color ModifiedColor = new Color(0.35f, 0.35f, 0f, 1f);
++    public static Color DeletedColor = new Color(0.5f, 0f, 0f, 1f);
++    public static Color UntrackedColor = new Color(0f, 0f, 0.5f, 1f);
++    public static Color AddedColor = new Color(0f, 0.5f, 0f, 1f);
++    public static Color RenamedColor = new Color(0f, 0.5f, 0.5f, 1f);
++    public static Color CopiedColor = new Color(0.5f, 0f, 0.5f, 1f);
++
++    // Ref colors:
++    public static Color CurrentBranchColor = new Color(0f, 0.5f, 0f, 1f);
++    public static Color BranchColor = new Color(0f, 0f, 0f, 1f);
++  }
++
++  public static class ProSkinColors {
++    public static Color TextColor = new Color(0.75f, 0.75f, 0.75f, 1f);
++    public static Color ErrorColor = new Color(1f, 0f, 0f, 1f);
++    public static Color LinkColor = new Color(0.2f, 0.2f, 1f, 1f);
++
++    // Change status colors:
++    public static Color ModifiedColor = new Color(0.75f, 0.75f, 0f, 1f);
++    public static Color DeletedColor = new Color(0.75f, 0f, 0f, 1f);
++    public static Color UntrackedColor = new Color(0.25f, 0.25f, 1f, 1f);
++    public static Color AddedColor = new Color(0f, 0.75f, 0f, 1f);
++    public static Color RenamedColor = new Color(0f, 0.75f, 0.75f, 1f);
++    public static Color CopiedColor = new Color(0.75f, 0f, 0.75f, 1f);
++
++    // Ref colors:
++    public static Color CurrentBranchColor = new Color(0f, 0.75f, 0f, 1f);
++    public static Color BranchColor = new Color(0.75f, 0.75f, 0.75f, 1f);
++  }
++
++  public static Color TextColor { get { return IsProSkin ? ProSkinColors.TextColor : NormalSkinColors.TextColor; } }
++  public static Color ErrorColor { get { return IsProSkin ? ProSkinColors.ErrorColor : NormalSkinColors.ErrorColor; } }
++  public static Color LinkColor { get { return IsProSkin ? ProSkinColors.LinkColor : NormalSkinColors.LinkColor; } }
+ 
+   // Change status colors:
+-  public static Color ModifiedColor = new Color(0.35f, 0.35f, 0f, 1f);
+-  public static Color DeletedColor = new Color(0.5f, 0f, 0f, 1f);
+-  public static Color UntrackedColor = new Color(0f, 0f, 0.5f, 1f);
+-  public static Color AddedColor = new Color(0f, 0.5f, 0f, 1f);
+-  public static Color RenamedColor = new Color(0f, 0.5f, 0.5f, 1f);
+-  public static Color CopiedColor = new Color(0.5f, 0f, 0.5f, 1f);
++  public static Color ModifiedColor { get { return IsProSkin ? ProSkinColors.ModifiedColor : NormalSkinColors.ModifiedColor; } }
++  public static Color DeletedColor { get { return IsProSkin ? ProSkinColors.DeletedColor : NormalSkinColors.DeletedColor; } }
++  public static Color UntrackedColor { get { return IsProSkin ? ProSkinColors.UntrackedColor : NormalSkinColors.UntrackedColor; } }
++  public static Color AddedColor { get { return IsProSkin ? ProSkinColors.AddedColor : NormalSkinColors.AddedColor; } }
++  public static Color RenamedColor { get { return IsProSkin ? ProSkinColors.RenamedColor : NormalSkinColors.RenamedColor; } }
++  public static Color CopiedColor { get { return IsProSkin ? ProSkinColors.CopiedColor : NormalSkinColors.CopiedColor; } }
+ 
+   // Ref colors:
+-  public static Color CurrentBranchColor = new Color(0f, 0.5f, 0f, 1f);
+-  public static Color BranchColor = new Color(0f, 0f, 0f, 1f);
++  public static Color CurrentBranchColor { get { return IsProSkin ? ProSkinColors.CurrentBranchColor : NormalSkinColors.CurrentBranchColor; } }
++  public static Color BranchColor { get { return IsProSkin ? ProSkinColors.BranchColor : NormalSkinColors.BranchColor; } }
+ 
+   private static GUIStyle _Indented = null;
+   public static GUIStyle Indented {
+@@ -50,11 +86,22 @@ public static class GitStyles {
+     }
+   }
+ 
++  public static bool IsProSkin {
++    get {
++      return EditorStyles.whiteLargeLabel.normal.textColor == Color.black;
++    }
++  }
++
+   private static GUIStyle _FileLabel = null;
+   public static GUIStyle FileLabel {
+     get {
+       if(_FileLabel == null) {
+-        _FileLabel = new GUIStyle(WhiteLargeLabel);
++        _FileLabel = new GUIStyle(WhiteLargeLabel) {
++          normal = new GUIStyleState() {
++            background = null,
++            textColor = Color.white
++          }
++        };
+       }
+       return _FileLabel;
+     }
+@@ -120,6 +167,10 @@ public static class GitStyles {
+     get {
+       if(_WhiteLabel == null) {
+         _WhiteLabel = new GUIStyle(EditorStyles.whiteLabel) {
++          normal = new GUIStyleState() {
++            background = null,
++            textColor = Color.white
++          },
+           padding = ZeroOffset,
+           margin = ZeroOffset
+         };
+@@ -133,6 +184,10 @@ public static class GitStyles {
+     get {
+       if(_WhiteBoldLabel == null) {
+         _WhiteBoldLabel = new GUIStyle(EditorStyles.whiteBoldLabel) {
++          normal = new GUIStyleState() {
++            background = null,
++            textColor = Color.white
++          },
+           padding = ZeroOffset,
+           margin = ZeroOffset
+         };
+@@ -146,6 +201,10 @@ public static class GitStyles {
+     get {
+       if(_WhiteLargeLabel == null) {
+         _WhiteLargeLabel = new GUIStyle(EditorStyles.whiteLargeLabel) {
++          normal = new GUIStyleState() {
++            background = null,
++            textColor = Color.white
++          },
+           padding = ZeroOffset,
+           margin = ZeroOffset
+         };
+@@ -162,7 +221,7 @@ public static class GitStyles {
+           padding = ZeroOffset,
+           margin = ZeroOffset,
+           normal = new GUIStyleState() {
+-            textColor = GitStyles.LinkColor
++            textColor = Color.white
+           }
+         };
+       }
