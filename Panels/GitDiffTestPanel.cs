@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
+using UnityGit.DiffView;
 using UnityGit.DiffView.State;
 
 public class GitDiffTestPanel : GitPanel {
@@ -327,9 +328,13 @@ public class GitDiffTestPanel : GitPanel {
   private bool showFileNames = true;
   public override void OnGUI() {
     showFileNames = GUILayout.Toggle(showFileNames, "Show left/right filename indicators?");
-    scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GitStyles.FileListBox);
-      WordDiffDisplay(TEST_DIFF, showFileNames);
-    EditorGUILayout.EndScrollView();
+    GUILayout.BeginHorizontal(GitStyles.FileListBox);
+      scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+        GUILayout.BeginVertical(Styles.Padding);
+          WordDiffDisplay(TEST_DIFF, showFileNames);
+        GUILayout.EndVertical();
+      EditorGUILayout.EndScrollView();
+    GUILayout.EndHorizontal();
   }
 
   // Base constructor

@@ -34,6 +34,22 @@ namespace UnityGit.DiffView {
       }
     }
     */
+
+    private static GUIStyle _Padding = null;
+    public static GUIStyle Padding {
+      get {
+        if(_Padding == null) {
+          _Padding = new GUIStyle() {
+            margin = new RectOffset(2,2,2,2),
+            padding = ZeroOffset,
+            stretchWidth = true,
+            stretchHeight = true
+          };
+        }
+        return _Padding;
+      }
+    }
+
     private static GUIStyle _HeaderPro = null, _HeaderNormal = null;
     public static GUIStyle Header {
       get {
@@ -58,6 +74,7 @@ namespace UnityGit.DiffView {
         return IsProSkin ? _HeaderPro : _HeaderNormal;
       }
     }
+
     private static GUIStyle _MarkerPositionPro = null, _MarkerPositionNormal = null;
     public static GUIStyle MarkerPosition {
       get {
@@ -82,6 +99,7 @@ namespace UnityGit.DiffView {
         return IsProSkin ? _MarkerPositionPro : _MarkerPositionNormal;
       }
     }
+
     private static GUIStyle _MarkerContextPro = null, _MarkerContextNormal = null;
     public static GUIStyle MarkerContext {
       get {
@@ -106,6 +124,7 @@ namespace UnityGit.DiffView {
         return IsProSkin ? _MarkerContextPro : _MarkerContextNormal;
       }
     }
+
     private static GUIStyle _LeftFilePro = null, _LeftFileNormal = null;
     public static GUIStyle LeftFile {
       get {
@@ -130,6 +149,7 @@ namespace UnityGit.DiffView {
         return IsProSkin ? _LeftFilePro : _LeftFileNormal;
       }
     }
+
     private static GUIStyle _RightFilePro = null, _RightFileNormal = null;
     public static GUIStyle RightFile {
       get {
@@ -154,6 +174,7 @@ namespace UnityGit.DiffView {
         return IsProSkin ? _RightFilePro : _RightFileNormal;
       }
     }
+
     private static GUIStyle _NormalPro = null, _NormalNormal = null;
     public static GUIStyle Normal {
       get {
@@ -170,6 +191,7 @@ namespace UnityGit.DiffView {
         return IsProSkin ? _NormalPro : _NormalNormal;
       }
     }
+
     private static GUIStyle _AdditionPro = null, _AdditionNormal = null;
     public static GUIStyle Addition {
       get {
@@ -192,6 +214,7 @@ namespace UnityGit.DiffView {
         return IsProSkin ? _AdditionPro : _AdditionNormal;
       }
     }
+
     private static GUIStyle _RemovalPro = null, _RemovalNormal = null;
     public static GUIStyle Removal {
       get {
