@@ -5,6 +5,7 @@ namespace UnityGit.DiffView {
   public static class Styles {
     private static RectOffset ZeroOffset = new RectOffset(0,0,0,0);
     // TODO: Suss out some sort of monospaced font here.  >.<
+    // TODO: Show trailing whitespace a la "git gui"...
 
     /* Template for styles:
     private static GUIStyle _@FOO@Pro = null, _@FOO@Normal = null;
