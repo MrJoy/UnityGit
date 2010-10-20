@@ -3,6 +3,8 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
+using UnityGit.DiffView.State;
+
 public class GitDiffTestPanel : GitPanel {
   private static string TEST_DIFF = 
     "diff --git a/GitPanel.cs b/GitPanel.cs\n" +
@@ -299,174 +301,16 @@ public class GitDiffTestPanel : GitPanel {
     "       }\n" +
     "~\n";
 
-  public class DiffViewState {
-    public DiffViewState() {}
-
-    private bool isDirty = false;
-
-    private Color _header = Color.white;
-    public Color header {
-      set { if(_header != value) { _header = value; isDirty = true; } }
-      get { return _header; }
-    }
-
-    private Color _marker = Color.cyan;
-    public Color marker {
-      set { if(_marker != value) { _marker = value; isDirty = true; } }
-      get { return _marker; }
-    }
-
-    private Color _unchanged = Color.black;
-    public Color unchanged {
-      set { if(_unchanged != value) { _unchanged = value; isDirty = true; } }
-      get { return _unchanged; }
-    }
-
-    private Color _add = Color.green;
-    public Color add {
-      set { if(_add != value) { _add = value; isDirty = true; } }
-      get { return _add; }
-    }
-
-    private Color _remove = Color.red;
-    public Color remove {
-      set { if(_remove != value) { _remove = value; isDirty = true; } }
-      get { return _remove; }
-    }
-
-    private string _content;
-    public string content {
-      set { if(_content != value) { _content = value; isDirty = true; } }
-      get { return _content; }
-    }
-
-    public class Line {
-      public string[] segments;
-      public Color[] colors;
-    }
-
-    private Line[] _lines;
-    public Line[] lines {
-      get {
-        if(_lines == null || isDirty)
-          OnRefresh();
-        return _lines;
-      }
-    }
-
-    private class LinesBuilder {
-      List<Line> linesTmp = new List<Line>();
-      List<string> segmentsTmp = new List<string>();
-      List<Color> colorsTmp = new List<Color>();
-
-      public void AddSegment(Color c, string s) {
-        segmentsTmp.Add(s);
-        colorsTmp.Add(c);
-      }
-
-      public void CommitLine() {
-        if(segmentsTmp.Count > 0) {
-          linesTmp.Add(new Line() {
-            segments = segmentsTmp.ToArray(),
-            colors = colorsTmp.ToArray()
-          });
-          colorsTmp.Clear();
-          segmentsTmp.Clear();
-        }
-      }
-
-      public Line[] ToArray() {
-        return linesTmp.ToArray();
-      }
-    }
-
-    public void OnRefresh() {
-      isDirty = false;
-      if(content == null) {
-        _lines = new Line[0];
-        return;
-      }
-
-      string[] rawLines = content.Split('\n');
-      int state = 0;
-      LinesBuilder builder = new LinesBuilder();
-      foreach(string rawLine in rawLines) {
-        if(rawLine == "")
-          continue;
-
-        char selector;
-        switch(state) {
-          case 0: // Expecting file header info, OR possibly a segment marker.
-            selector = rawLine[0];
-            if(selector == '@')
-              state = 1; // Got a segment marker, so handle accordingly.
-            break;
-          case 1: // Shouldn't happen...
-            Debug.LogError("Uh, this should not have happened.");
-            break;
-          case 2: // In content-line segments...
-            selector = rawLine[0];
-            switch(selector) {
-              case '@': state = 1; break;
-              case '~': state = 3; break;
-              case ' ': state = 4; break;
-              case '+': state = 5; break;
-              case '-': state = 6; break;
-              default: state = 0; break;
-            }
-            break;
-          case 3: case 4: case 5: case 6: // Shouldn't happen...
-            Debug.LogError("Uh, this should not have happened.");
-            break;
-        }
-
-        switch(state) {
-          case 0: // Expecting file header info.
-            builder.AddSegment(header, rawLine);
-            builder.CommitLine();
-            break;
-          case 1: // Expecting segment marker.
-            int splitPoint = rawLine.IndexOf("@@", 2);
-            builder.AddSegment(marker, rawLine.Substring(0, splitPoint + 2));
-            builder.AddSegment(header, rawLine.Substring(splitPoint + 2));
-            builder.CommitLine();
-            state = 2;
-            break;
-          case 2: // Shouldn't happen...
-            Debug.LogError("Uh, this should not have happened.");
-            break;
-          case 3: // End-of-line.
-            builder.CommitLine();
-            state = 2;
-            break;
-          case 4: // Unchanged content segment.
-            builder.AddSegment(unchanged, rawLine.Substring(1));
-            state = 2;
-            break;
-          case 5: // Added content segment.
-            builder.AddSegment(add, rawLine.Substring(1));
-            state = 2;
-            break;
-          case 6: // Removed content segment.
-            builder.AddSegment(remove, rawLine.Substring(1));
-            state = 2;
-            break;
-        }
-      }
-      _lines = builder.ToArray();
-    }
-  }
-
   protected static void WordDiffDisplay(string content) {
     int id = GUIUtility.GetControlID(FocusType.Passive);
-    DiffViewState state = (DiffViewState)GUIUtility.GetStateObject(typeof(DiffViewState), id);
+    WordDiffState state = (WordDiffState)GUIUtility.GetStateObject(typeof(WordDiffState), id);
     state.content = content;
 
-    DiffViewState.Line[] lines = state.lines;
+    Line[] lines = state.lines;
 
     Color oldColor = GUI.contentColor;
     GUILayout.BeginVertical();
-      foreach(DiffViewState.Line line in lines) {
+      foreach(Line line in lines) {
         GUILayout.BeginHorizontal();
           for(int i = 0; i < line.segments.Length; i++) {
             GUI.contentColor = line.colors[i];
