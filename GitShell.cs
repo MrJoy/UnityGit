@@ -51,6 +51,7 @@ public class GitShell : EditorWindow {
     new GUIContent("History"),
     new GUIContent("Refs"),
     null,
+    new GUIContent("TEST-Diff"),
     new GUIContent("About")
   };
 
@@ -65,6 +66,7 @@ public class GitShell : EditorWindow {
       null,
       new GitRefsPanel(this),
       null,
+      new GitDiffTestPanel(this),
       new GitAboutPanel(this)
     };
   }
