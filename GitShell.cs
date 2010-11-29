@@ -69,20 +69,11 @@ public class GitShell : EditorWindow {
     };
   }
 
-  protected static GUILayoutOption ExpandWidth = GUILayout.ExpandWidth(true),
-                                   NoExpandWidth = GUILayout.ExpandWidth(false),
-                                   ExpandHeight = GUILayout.ExpandHeight(true),
-                                   NoExpandHeight = GUILayout.ExpandHeight(false);
-
-  protected static void ToolbarSpace() {
-    GUILayout.Space(10);
-  }
-
   public void OnGUI() {
     GitPanel panel = panels[panelIndex];
 
-    GUILayout.BeginHorizontal(EditorStyles.toolbar, ExpandWidth);
-      if(GUILayout.Button(refreshButton, EditorStyles.toolbarButton, NoExpandWidth))
+    EditorGUILayoutToolbar.Begin();
+      if(GUILayout.Button(refreshButton, EditorStyles.toolbarButton, GUIHelper.NoExpandWidth))
         forceRefresh = true;
 
       if(forceRefresh && panel != null) {
@@ -90,21 +81,21 @@ public class GitShell : EditorWindow {
         panel.OnRefresh();
       }
 
-      ToolbarSpace();
+      EditorGUILayoutToolbar.Space();
       for(int i = 0; i < panelLabels.Length; i++) {
         if(panelLabels[i] == null) {
-          ToolbarSpace();
+          EditorGUILayoutToolbar.Space();
           if(panel != null && !panel.IsDisabledForError) {
             panel.OnToolbarGUI();
-            ToolbarSpace();
+            EditorGUILayoutToolbar.Space();
           }
-          GUILayout.Label(GUIContent.none, GUIStyle.none, ExpandWidth);
+          EditorGUILayoutToolbar.FlexibleSpace();
         } else {
-          if(GUILayout.Toggle((panelIndex == i), panelLabels[i], EditorStyles.toolbarButton, NoExpandWidth))
+          if(GUILayout.Toggle((panelIndex == i), panelLabels[i], EditorStyles.toolbarButton, GUIHelper.NoExpandWidth))
             panelIndex = i;
         }
       }
-    GUILayout.EndHorizontal();
+    EditorGUILayoutToolbar.End();
     GUILayout.BeginVertical(GitStyles.Indented);
       panel = panels[panelIndex];
       if(panel != null) {
