@@ -19,8 +19,8 @@ public class GitStatusPanel : GitPanel {
   // Static helper data.
   private static Texture DEFAULT_FILE_ICON = EditorGUIUtility.ObjectContent(null, typeof(MonoScript)).image;
   private static GUIContent DUMMY_CONTENT = new GUIContent("X");
-  private static GUILayoutOption ICON_WIDTH = GUILayout.Width(16), 
-                                 ITEM_HEIGHT = GUILayout.Height(21), 
+  private static GUILayoutOption ICON_WIDTH = GUILayout.Width(16),
+                                 ITEM_HEIGHT = GUILayout.Height(21),
                                  MAX_ITEM_HEIGHT = GUILayout.MaxHeight(21);
 
 
@@ -96,7 +96,7 @@ public class GitStatusPanel : GitPanel {
       case GitWrapper.ChangeType.Renamed:   c = GitStyles.RenamedColor; break;
       case GitWrapper.ChangeType.Copied:    c = GitStyles.CopiedColor; break;
       case GitWrapper.ChangeType.Untracked: c = GitStyles.UntrackedColor; break;
-      default: 
+      default:
         Debug.Log("Should not have gotten this status: " + status);
         break;
     }
@@ -185,7 +185,7 @@ public class GitStatusPanel : GitPanel {
         GUILayout.Label(path, style);
         GUILayout.Space(3);
       EditorGUILayout.EndVertical();
-      if(GUI.Button(r, NoContent, NoStyle)) {
+      if(GUI.Button(r, GUIHelper.NoContent, GUIHelper.NoStyle)) {
         isChanged = true;
         isSelected = !isSelected;
         bool addToSelection = false, rangeSelection = false;
@@ -207,7 +207,7 @@ public class GitStatusPanel : GitPanel {
   }
 
   protected Vector2 FileListView(GUIContent label, Vector2 scrollPos, FilterDelegate filter, ChangeTypeDelegate changeTypeFetcher, WholeFileCommand cmd, SelectionState selectionCache) {
-    GUILayout.Label(label, GitStyles.BoldLabel, NoExpandWidth);
+    GUILayout.Label(label, GitStyles.BoldLabel, GUIHelper.NoExpandWidth);
     int id = GUIUtility.GetControlID(FocusType.Passive);
     bool hasFocus = GUIUtility.hotControl == id;
     bool isChanged = false;
@@ -265,7 +265,7 @@ public class GitStatusPanel : GitPanel {
   protected void ShowCommitMessageEditor() {
     // TODO: Make this scrollable, and make it obey editor commands properly.
     // TODO: Clear selection cache as appropriate.
-    commitMessage = GUILayout.TextArea(commitMessage, GUILayout.MinHeight(editorLineHeight * 9 + 2), ExpandHeight);
+    commitMessage = GUILayout.TextArea(commitMessage, GUILayout.MinHeight(editorLineHeight * 9 + 2), GUIHelper.ExpandHeight);
     GUILayout.BeginHorizontal();
       GUILayout.Button(STAGE_CHANGES_BUTTON, GitStyles.CommandLeft);
       if(GUILayout.Button(SIGN_OFF_BUTTON, GitStyles.CommandMid))
@@ -292,7 +292,7 @@ public class GitStatusPanel : GitPanel {
         scrollPosition = DiffGUI.ScrollableWordDiff(scrollPosition, lastDiff, false);
       GUILayout.EndHorizontal();
     } else
-      GUILayout.Box(NoContent, GitStyles.FileListBox, ExpandWidth, ExpandHeight);
+      GUILayout.Box(GUIHelper.NoContent, GitStyles.FileListBox, GUIHelper.ExpandWidth, GUIHelper.ExpandHeight);
   }
 
   private VerticalPaneState changesConfiguration = new VerticalPaneState() {
@@ -312,32 +312,32 @@ public class GitStatusPanel : GitPanel {
     Init();
 
     Color c = GUI.color;
-    BeginHorizontalPanes(overallConfiguration);
+    EditorGUILayoutHorizontalPanes.Begin(overallConfiguration);
       GUILayout.BeginVertical();
         GUILayout.BeginHorizontal();
-          GUILayout.Label(CURRENT_BRANCH_LABEL, GitStyles.BoldLabel, NoExpandWidth);
+          GUILayout.Label(CURRENT_BRANCH_LABEL, GitStyles.BoldLabel, GUIHelper.NoExpandWidth);
           GUILayout.Space(boldLabelSpaceSize);
           GUI.color = isDetachedHeadMode ? GitStyles.ErrorColor : GitStyles.TextColor;
-          GUILayout.Label(currentBranchLabel, GitStyles.WhiteBoldLabel, NoExpandWidth);
+          GUILayout.Label(currentBranchLabel, GitStyles.WhiteBoldLabel, GUIHelper.NoExpandWidth);
           GUI.color = c;
         GUILayout.EndHorizontal();
         Space();
 
-        BeginVerticalPanes(changesConfiguration);
+        EditorGUILayoutVerticalPanes.Begin(changesConfiguration);
           ShowUnstagedChanges();
-        VerticalSplitter();
+        EditorGUILayoutVerticalPanes.Splitter();
           ShowStagedChanges();
-        EndVerticalPanes();
+        EditorGUILayoutVerticalPanes.End();
       GUILayout.EndVertical();
-    HorizontalSplitter();
+    EditorGUILayoutHorizontalPanes.Splitter();
       GUILayout.BeginVertical();
-        BeginVerticalPanes(commitAndDiffConfiguration);
+        EditorGUILayoutVerticalPanes.Begin(commitAndDiffConfiguration);
           ShowDiffView();
-        VerticalSplitter();
+        EditorGUILayoutVerticalPanes.Splitter();
           ShowCommitMessageEditor();
-        EndVerticalPanes();
+        EditorGUILayoutVerticalPanes.End();
       GUILayout.EndVertical();
-    EndHorizontalPanes();
+    EditorGUILayoutHorizontalPanes.End();
   }
 
   // Base constructor

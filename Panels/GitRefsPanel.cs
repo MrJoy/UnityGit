@@ -22,7 +22,7 @@ public class GitRefsPanel : GitPanel {
   }
 
   protected static void EndList() {
-    GUILayout.Label(NoContent, ExpandHeight);
+    GUILayout.Label(GUIHelper.NoContent, GUIHelper.ExpandHeight);
     EditorGUILayout.EndScrollView();
   }
 
@@ -32,7 +32,7 @@ public class GitRefsPanel : GitPanel {
     string currentBranch = GitWrapper.CurrentBranch;
     Color c = GUI.contentColor;
 
-    GUILayout.BeginVertical(ExpandWidth, ExpandHeight);
+    GUILayout.BeginVertical(GUIHelper.ExpandWidth, GUIHelper.ExpandHeight);
       int counter = 0;
       branchesPos = BeginList(BRANCHES_LABEL, branchesPos);
         counter = 0;
@@ -44,7 +44,7 @@ public class GitRefsPanel : GitPanel {
             GUI.contentColor = c;
           }
         }
-        if(counter == 0) GUILayout.Label(NoContent, ExpandHeight);
+        if(counter == 0) GUILayout.Label(GUIHelper.NoContent, GUIHelper.ExpandHeight);
       EndList();
 
       Space();
@@ -59,7 +59,7 @@ public class GitRefsPanel : GitPanel {
             GUI.contentColor = c;
           }
         }
-        if(counter == 0) GUILayout.Label(NoContent, ExpandHeight);
+        if(counter == 0) GUILayout.Label(GUIHelper.NoContent, GUIHelper.ExpandHeight);
       EndList();
 
       Space();
@@ -74,7 +74,7 @@ public class GitRefsPanel : GitPanel {
             GUI.contentColor = c;
           }
         }
-        if(counter == 0) GUILayout.Label(NoContent, ExpandHeight);
+        if(counter == 0) GUILayout.Label(GUIHelper.NoContent, GUIHelper.ExpandHeight);
       EndList();
     GUILayout.EndVertical();
   }
