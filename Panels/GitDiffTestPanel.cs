@@ -1,8 +1,36 @@
 using UnityEngine;
 using UnityGit.DiffView;
 
+using UnityEditor;
+using System.Reflection;
+using System;
 
 public class GitDiffTestPanel : GitPanel {
+/*
+	private static Type[] ToolbarSearchField_types = new Type[] { typeof(string), typeof(string[]), Type.GetType("System.Int32&"), typeof(GUILayoutOption[]) };
+	private static System.Object[] ToolbarSearchField_parameters = new System.Object[] { null, null, null, new GUILayoutOption [0] };
+	private static MethodInfo ToolbarSearchField_method = (typeof(EditorGUILayout)).GetMethod ("ToolbarSearchField",(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public),null,ToolbarSearchField_types,null);
+
+	public static string ToolbarSearchField(string search, string[] modes, ref int mode) {
+		ToolbarSearchField_parameters[0] = search;
+		ToolbarSearchField_parameters[1] = modes;
+		ToolbarSearchField_parameters[2] = mode;
+		string tmp = (string)ToolbarSearchField_method.Invoke(null,ToolbarSearchField_parameters);
+		mode = (int)ToolbarSearchField_parameters[2];
+		return tmp;
+	}
+
+
+  int idx = 0;
+  string[] labels = { "Two turn tables", "Microphone", "Where it's at", "", "Woof" };
+
+  private string searchTerm = "";
+  public override void OnToolbarGUI() {
+    searchTerm = ToolbarSearchField(searchTerm, labels, ref idx);
+//    idx = EditorGUILayout.Popup(idx, labels, EditorStyles.toolbarDropDown);
+//    idx = EditorGUILayout.Popup(idx, labels, EditorStyles.toolbarPopup);
+  }
+*/
   private static string TEST_DIFF = 
     "diff --git a/GitPanel.cs b/GitPanel.cs\n" +
     "index d408a19..8e9863a 100644\n" +
