@@ -49,7 +49,7 @@ public class GitShell : EditorWindow {
     new GUIContent("History"),
     new GUIContent("Refs"),
     null,
-    new GUIContent("TEST-Diff"),
+    new GUIContent("TEST Diff"),
     new GUIContent("About")
   };
 
@@ -82,14 +82,17 @@ public class GitShell : EditorWindow {
       }
 
       EditorGUILayoutToolbar.Space();
+      bool hasShownToolbar = false;
       for(int i = 0; i < panelLabels.Length; i++) {
         if(panelLabels[i] == null) {
-          EditorGUILayoutToolbar.Space();
-          if(panel != null && !panel.IsDisabledForError) {
-            panel.OnToolbarGUI();
+          if(!hasShownToolbar) {
+            hasShownToolbar = true;
             EditorGUILayoutToolbar.Space();
+            if(panel != null && !panel.IsDisabledForError) {
+              panel.OnToolbarGUI();
+            }
+            EditorGUILayoutToolbar.FlexibleSpace();
           }
-          EditorGUILayoutToolbar.FlexibleSpace();
         } else {
           if(GUILayout.Toggle((panelIndex == i), panelLabels[i], EditorStyles.toolbarButton, GUIHelper.NoExpandWidth))
             panelIndex = i;
