@@ -209,16 +209,10 @@ public class GitStatusPanel : GitPanel {
     }
     tmp = (GUIContent)iconCache[path];
 
-    //GUI.backgroundColor = Color.red;
-    //GUI.Label(position, position.x + "x" + position.y + "->" + position.width + "x" + position.height, "button");
     GUILayout.BeginHorizontal();
       GUILayout.Label(tmp, style, ICON_WIDTH, ITEM_HEIGHT);
       Rect iconPosition = GUILayoutUtility.GetLastRect();
 
-      // TODO: Click on icon to stage/unstage file.
-      /*  isChanged = true;
-        cmd(path);
-        selectionCache.Unselect(path); */
       Color c = GUI.contentColor;
       GUI.contentColor = ColorForChangeType(status);
       Rect labelPosition = EditorGUILayout.BeginVertical(style, MAX_ITEM_HEIGHT);
@@ -228,7 +222,6 @@ public class GitStatusPanel : GitPanel {
       EditorGUILayout.EndVertical();
       GUI.contentColor = c;
     GUILayout.EndHorizontal();
-//    GUI.backgroundColor = Color.white;
 
     if(current.type == EventType.MouseDown) {
       if(iconPosition.Contains(current.mousePosition)) {
