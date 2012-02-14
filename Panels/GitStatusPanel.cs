@@ -8,7 +8,6 @@ public class GitStatusPanel : GitPanel {
   // Messages...
   private static GUIContent UNSTAGED_CHANGES_LABEL = new GUIContent("Unstaged Changes:"),
                             STAGED_CHANGES_LABEL = new GUIContent("Staged Changes:"),
-                            CURRENT_BRANCH_LABEL = new GUIContent("Current Branch:"),
                             STAGE_CHANGES_BUTTON = new GUIContent("Stage Changed"),
                             SIGN_OFF_BUTTON = new GUIContent("Sign Off"),
                             COMMIT_BUTTON = new GUIContent("Commit"),
@@ -41,7 +40,6 @@ public class GitStatusPanel : GitPanel {
     // Set up data we can't set up until OnGUI.
     if(editorLineHeight <= 0) {
       editorLineHeight = GUI.skin.GetStyle("textarea").CalcHeight(DUMMY_CONTENT, 100);
-      boldLabelSpaceSize = SizeOfSpace(GitStyles.BoldLabel);
     }
     if(isDirty) {
       OnRefresh();
@@ -338,7 +336,7 @@ public class GitStatusPanel : GitPanel {
     indexScrollPos = FileListView(STAGED_CHANGES_LABEL, indexScrollPos, IndexSetFilter, IndexSetFetcher, UnstagePath, indexSetSelectionCache);
   }
 
-  private float editorLineHeight = -1, boldLabelSpaceSize = -1;
+  private float editorLineHeight = -1;
   private string commitMessage = "";
   private bool amendCommit = false;
   protected void ShowCommitMessageEditor() {
@@ -390,7 +388,6 @@ public class GitStatusPanel : GitPanel {
   public override void OnGUI() {
     Init();
 
-    Color c = GUI.color;
     EditorGUILayoutHorizontalPanes.Begin(overallConfiguration);
       GUILayout.BeginVertical();
         EditorGUILayout.HelpBox(currentBranchLabel.text, isDetachedHeadMode ? MessageType.Warning : MessageType.Info, true);
