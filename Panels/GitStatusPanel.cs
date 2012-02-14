@@ -314,13 +314,8 @@ public class GitStatusPanel : GitPanel {
     Color c = GUI.color;
     EditorGUILayoutHorizontalPanes.Begin(overallConfiguration);
       GUILayout.BeginVertical();
-        GUILayout.BeginHorizontal();
-          GUILayout.Label(CURRENT_BRANCH_LABEL, GitStyles.BoldLabel, GUIHelper.NoExpandWidth);
-          GUILayout.Space(boldLabelSpaceSize);
-          GUI.color = isDetachedHeadMode ? GitStyles.ErrorColor : GitStyles.TextColor;
-          GUILayout.Label(currentBranchLabel, GitStyles.WhiteBoldLabel, GUIHelper.NoExpandWidth);
-          GUI.color = c;
-        GUILayout.EndHorizontal();
+        EditorGUILayout.HelpBox(currentBranchLabel.text, isDetachedHeadMode ? MessageType.Warning : MessageType.Info, true);
+
         Space();
 
         EditorGUILayoutVerticalPanes.Begin(changesConfiguration);
