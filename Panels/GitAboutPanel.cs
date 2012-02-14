@@ -7,21 +7,24 @@ public class GitAboutPanel : GitPanel {
   private GUIContent gitShellVersion = new GUIContent("UnityGit " + GitShell.VERSION);
   private GUIContent gitShellCopyright = new GUIContent(GitShell.COPYRIGHT);
   private GUIContent gitShellLink = new GUIContent("http://github.com/MrJoy/UnityGit");
-  private string gitVersion = null, gitBinary = null, gitProjectStatus = null;
+  private string gitVersion = null, gitBinary = null, gitProjectStatus = null, gitExtraStatus = null;
 
   public override void OnRefresh() {
     gitVersion = "Git Version: " + GitWrapper.Version;
     gitBinary = "Git Binary: " + GitWrapper.GitBinary;
     gitProjectStatus = "Project: Your Unity project is configured ideally.";
+    gitExtraStatus = null;
     if(!GitWrapper.IsUsable) {
-      if(GitWrapper.Version == null)
+      if(!GitWrapper.IsGitPresent) {
         gitVersion = "Git Version: N/A";
-      if(GitWrapper.GitBinary == null)
         gitBinary = "Git Binary: Can't find git binary!";
+      }
       if(!GitWrapper.IsVersioningEnabled)
         gitProjectStatus = "Project: You must set 'version control' to 'meta files' in the 'Editor' project panel!";
       else if(!GitWrapper.IsVersioningIdeal)
         gitProjectStatus = "Project: It's recommended you set 'asset serialization' to 'force text' in the 'Editor' project panel!";
+      if(!GitWrapper.IsWorking)
+        gitExtraStatus = "Had problems executing git commands!";
     }
   }
 
@@ -48,6 +51,8 @@ public class GitAboutPanel : GitPanel {
       t = MessageType.Error;
     }
     EditorGUILayout.HelpBox(gitProjectStatus, t, true);
+    if(gitExtraStatus != null)
+      EditorGUILayout.HelpBox(gitExtraStatus, MessageType.Error, true);
   }
 
   // Base constructor

@@ -6,10 +6,9 @@ public static class GitWrapper {
   public static bool IsVersioningEnabled { get { return EditorSettings.externalVersionControl == ExternalVersionControl.Generic; } }
   public static bool IsVersioningIdeal { get { return EditorSettings.serializationMode == SerializationMode.ForceText; } }
 
-  private static bool _isGitPresent = true;
-  public static bool IsGitPresent { get { return _isGitPresent; } }
+  public static bool IsGitPresent { get { return GitBinary != null; } }
 
-  private static bool _isWorking = false;
+  private static bool _isWorking = true;
   public static bool IsWorking { get { return _isWorking; } }
 
   public static bool IsUsable { get { return IsGitPresent && IsVersioningEnabled && IsWorking; } }
@@ -251,7 +250,6 @@ public static class GitWrapper {
           _gitBinary =  ShellHelpers.OutputFromCommand("which", "git");
         return _gitBinary;
       } catch {
-        _isGitPresent = false;
         return null;
       }
     }

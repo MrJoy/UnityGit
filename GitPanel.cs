@@ -6,7 +6,7 @@ public abstract class GitPanel {
 
 
   // Principal interface...
-  public virtual bool IsDisabledForError { get { return !GitWrapper.IsWorking; } }
+  public virtual bool IsDisabledForError { get { return !GitWrapper.IsUsable; } }
   public virtual void OnEnable() {}
   public virtual void OnDisable() {}
   public virtual void OnToolbarGUI() {}
