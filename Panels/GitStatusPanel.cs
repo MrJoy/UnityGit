@@ -249,7 +249,7 @@ public class GitStatusPanel : GitPanel {
         if(!addToSelection && !rangeSelection)
           state.selection.Clear();
         state.selection.Set(path, isSelected);
-        // TODO: For range selection we need the list of files..
+        // TODO: For range selection we need the list of files, index of last selection, etc.
       }
     }
 
@@ -305,22 +305,6 @@ public class GitStatusPanel : GitPanel {
       current.Use();
     }
 
-/*
-    scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GitStyles.FileListBox);
-      if(changes != null) {
-        for(int i = 0; i < changes.Length; i++) {
-          if(filter(changes[i])) {
-            isChanged = isChanged || ShowFile(id, selectionCache, changes[i].path, changeTypeFetcher(changes[i]), cmd);
-          }
-        }
-      }
-    EditorGUILayout.EndScrollView();
-    Rect r = GUILayoutUtility.GetLastRect();
-    isChanged = isChanged || ((Event.current.type == EventType.MouseDown) && r.Contains(Event.current.mousePosition));
-    if(isChanged && !hasFocus) {
-      GUIUtility.hotControl = id;
-      Shell.Repaint();
-    } */
     return scrollPos;
   }
 
