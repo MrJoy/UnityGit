@@ -28,7 +28,7 @@ public static class GitWrapper {
   public static string GetDiff(string path, bool wordDiff) {
     try {
       string diffParams = wordDiff ? "--word-diff=porcelain " : "";
-      return ShellHelpers.OutputFromCommand("git", "diff " + diffParams + "-- " + QuotePath(path));
+      return ShellHelpers.OutputFromCommand("git", "diff --submodule=log " + diffParams + "-- " + QuotePath(path));
     } catch {
       _isWorking = false;
       return null;
@@ -221,15 +221,15 @@ public static class GitWrapper {
   }
 
   public static void StagePath(string path) {
-    string tmp = ShellHelpers.OutputFromCommand("git", "add --ignore-errors -- " + QuotePath(path));
-    if(tmp != "")
-      UnityEngine.Debug.Log("<" + tmp + ">");
+    ShellHelpers.OutputFromCommand("git", "add --ignore-errors -- " + QuotePath(path));
+  }
+
+  public static void RemovePath(string path) {
+    ShellHelpers.OutputFromCommand("git", "rm -- " + QuotePath(path));
   }
 
   public static void UnstagePath(string path) {
-    string tmp = ShellHelpers.OutputFromCommand("git", "reset HEAD -- " + QuotePath(path));
-    if(tmp != "")
-      UnityEngine.Debug.Log("<" + tmp + ">");
+    ShellHelpers.OutputFromCommand("git", "reset HEAD -- " + QuotePath(path));
   }
 
   public static string ConfigGet(string key) {

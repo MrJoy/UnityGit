@@ -72,19 +72,23 @@ public class GitStatusPanel : GitPanel {
       commitMessage += "\n" + signOffMessage;
   }
 
-  public void StagePath(string path) {
-    GitWrapper.StagePath(path);
+  public void StagePath(GitWrapper.ChangeType changeType, string path) {
+    if(changeType == GitWrapper.ChangeType.Deleted) {
+      GitWrapper.RemovePath(path);
+    } else {
+      GitWrapper.StagePath(path);
+    }
     isDirty = true;
   }
 
-  public void UnstagePath(string path) {
+  public void UnstagePath(GitWrapper.ChangeType changeType, string path) {
     GitWrapper.UnstagePath(path);
     isDirty = true;
   }
 
 
   // Helpers.
-  protected delegate void WholeFileCommand(string path);
+  protected delegate void WholeFileCommand(GitWrapper.ChangeType changeType, string path);
   protected delegate bool FilterDelegate(GitWrapper.Change change);
   protected delegate GitWrapper.ChangeType ChangeTypeDelegate(GitWrapper.Change change);
 
@@ -226,7 +230,7 @@ public class GitStatusPanel : GitPanel {
     if(current.type == EventType.MouseDown) {
       if(iconPosition.Contains(current.mousePosition)) {
         isChanged = true;
-        cmd(path);
+        cmd(status, path);
         state.selection.Unselect(path);
       } else if(labelPosition.Contains(current.mousePosition)) {
         isChanged = true;
@@ -293,6 +297,9 @@ public class GitStatusPanel : GitPanel {
         break;
     }
     state.hasFocus = GUIUtility.keyboardControl == id;
+    if(!state.hasFocus) {
+      state.selection.Clear();
+    }
     if(isChanged) {
       GUI.changed = true;
       current.Use();
