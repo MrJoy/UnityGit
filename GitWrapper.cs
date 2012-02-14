@@ -189,22 +189,39 @@ public static class GitWrapper {
 
   public static Change[] Status {
     get {
-      Change[] output = null;
+      List<Change> changes = new List<Change>();
       try {
         string tmp = ShellHelpers.OutputFromCommand("git", "status --porcelain --untracked-files=all -z");
         string[] records = tmp.Split('\0');
-        output = new Change[records.Length];
         for(int i = 0; i < records.Length; i++) {
-          output[i] = new Change() {
-            indexStatus = ChangeTypeFromChar(records[i][0]),
-            workingStatus = ChangeTypeFromChar(records[i][1]),
-            path = records[i].Substring(3)
-          };
+          ChangeType iStatus = ChangeTypeFromChar(records[i][0]);
+          ChangeType wStatus = ChangeTypeFromChar(records[i][1]);
+
+          if(iStatus == ChangeType.Renamed) {
+            // Need to consume a couple entries here...
+            changes.Add(new Change() {
+              indexStatus = ChangeTypeFromChar('A'),
+              workingStatus = wStatus,
+              path = records[i].Substring(3)
+            });
+            changes.Add(new Change() {
+              indexStatus = ChangeTypeFromChar('D'),
+              workingStatus = wStatus,
+              path = records[i + 1]
+            });
+            i++;
+          } else {
+            changes.Add(new Change() {
+              indexStatus = iStatus,
+              workingStatus = wStatus,
+              path = records[i].Substring(3)
+            });
+          }
         }
       } catch {
         // TODO: Hrm....
       }
-      return output;
+      return changes.ToArray();
     }
   }
 
