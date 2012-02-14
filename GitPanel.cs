@@ -11,6 +11,8 @@ public abstract class GitPanel {
   public virtual void OnDisable() {}
   public virtual void OnToolbarGUI() {}
   public virtual void OnRefresh() {}
+  public virtual void OnFocus() { }
+  public virtual void OnLostFocus() { }
   public abstract void OnGUI();
 
 

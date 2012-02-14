@@ -33,9 +33,16 @@ public class GitShell : EditorWindow {
 
   public void OnFocus() {
     forceRefresh = true;
+    GitPanel panel = panels[panelIndex];
+    if(panel != null)
+      panel.OnFocus();
   }
 
-  public void OnLostFocus() { }
+  public void OnLostFocus() {
+    GitPanel panel = panels[panelIndex];
+    if(panel != null)
+      panel.OnLostFocus();
+  }
 
   public void OnDestroy() { }
 
