@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------
 //  GitShell v0.1
-//  Copyright 2010 MrJoy, Inc.
+//  Copyright 2012 MrJoy, Inc.
 //  All rights reserved
 //
 //-----------------------------------------------------------------
@@ -11,8 +11,8 @@ using UnityEditor;
 using UnityEngine;
 
 public class GitShell : EditorWindow {
-  public const string VERSION = "0.0.1";
-  public const string COPYRIGHT = "(C)Copyright 2010 MrJoy, Inc.";
+  public const string VERSION = "0.0.2";
+  public const string COPYRIGHT = "(C)Copyright 2012 MrJoy, Inc.";
 
   protected GUIContent refreshButton = new GUIContent();
 

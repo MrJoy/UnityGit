@@ -3,8 +3,16 @@ using System.Collections.Generic;
 using UnityEditor;
 
 public static class GitWrapper {
-  private static bool _isWorking = true;
-  public static bool IsWorking { get { return _isWorking && (EditorSettings.externalVersionControl == ExternalVersionControl.Generic); } }
+  public static bool IsVersioningEnabled { get { return EditorSettings.externalVersionControl == ExternalVersionControl.Generic; } }
+  public static bool IsVersioningIdeal { get { return EditorSettings.serializationMode == SerializationMode.ForceText; } }
+
+  private static bool _isGitPresent = true;
+  public static bool IsGitPresent { get { return _isGitPresent; } }
+
+  private static bool _isWorking = false;
+  public static bool IsWorking { get { return _isWorking; } }
+
+  public static bool IsUsable { get { return IsGitPresent && IsVersioningEnabled && IsWorking; } }
 
   public static string CurrentBranch {
     get {
@@ -26,9 +34,9 @@ public static class GitWrapper {
       _isWorking = false;
       return null;
     }
-    
+
   }
-  
+
   public enum RefKind {
     Branch, TrackingBranch, Tag, Other
   }
@@ -42,7 +50,7 @@ public static class GitWrapper {
       get {
         if(!isInitialized) {
           isInitialized = true;
-          if(fullName.StartsWith("refs/heads/")) 
+          if(fullName.StartsWith("refs/heads/"))
             _kind = RefKind.Branch;
           else if(fullName.StartsWith("refs/remotes/"))
             _kind = RefKind.TrackingBranch;
@@ -234,13 +242,16 @@ public static class GitWrapper {
     }
   }
 
+  private static string _gitBinary = null;
   public static string GitBinary {
     get {
       // TODO: This is OSX-specific.  We should fix that.
       try {
-        return ShellHelpers.OutputFromCommand("which", "git");
+        if(_gitBinary == null)
+          _gitBinary =  ShellHelpers.OutputFromCommand("which", "git");
+        return _gitBinary;
       } catch {
-        _isWorking = false;
+        _isGitPresent = false;
         return null;
       }
     }
