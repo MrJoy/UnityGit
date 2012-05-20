@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------
 //  GitShell v0.1
-//  Copyright 2010 MrJoy, Inc.
+//  Copyright 2012 MrJoy, Inc.
 //  All rights reserved
 //
 //-----------------------------------------------------------------
@@ -11,8 +11,8 @@ using UnityEditor;
 using UnityEngine;
 
 public class GitShell : EditorWindow {
-  public const string VERSION = "0.0.1";
-  public const string COPYRIGHT = "(C)Copyright 2010 MrJoy, Inc.";
+  public const string VERSION = "0.0.2";
+  public const string COPYRIGHT = "(C)Copyright 2012 MrJoy, Inc.";
 
   protected GUIContent refreshButton = new GUIContent();
 
@@ -33,9 +33,16 @@ public class GitShell : EditorWindow {
 
   public void OnFocus() {
     forceRefresh = true;
+    GitPanel panel = panels[panelIndex];
+    if(panel != null)
+      panel.OnFocus();
   }
 
-  public void OnLostFocus() { }
+  public void OnLostFocus() {
+    GitPanel panel = panels[panelIndex];
+    if(panel != null)
+      panel.OnLostFocus();
+  }
 
   public void OnDestroy() { }
 
@@ -49,7 +56,7 @@ public class GitShell : EditorWindow {
     new GUIContent("History"),
     new GUIContent("Refs"),
     null,
-    new GUIContent("TEST-Diff"),
+    new GUIContent("TEST Diff"),
     new GUIContent("About")
   };
 
@@ -82,14 +89,17 @@ public class GitShell : EditorWindow {
       }
 
       EditorGUILayoutToolbar.Space();
+      bool hasShownToolbar = false;
       for(int i = 0; i < panelLabels.Length; i++) {
         if(panelLabels[i] == null) {
-          EditorGUILayoutToolbar.Space();
-          if(panel != null && !panel.IsDisabledForError) {
-            panel.OnToolbarGUI();
+          if(!hasShownToolbar) {
+            hasShownToolbar = true;
             EditorGUILayoutToolbar.Space();
+            if(panel != null && !panel.IsDisabledForError) {
+              panel.OnToolbarGUI();
+            }
+            EditorGUILayoutToolbar.FlexibleSpace();
           }
-          EditorGUILayoutToolbar.FlexibleSpace();
         } else {
           if(GUILayout.Toggle((panelIndex == i), panelLabels[i], EditorStyles.toolbarButton, GUIHelper.NoExpandWidth))
             panelIndex = i;

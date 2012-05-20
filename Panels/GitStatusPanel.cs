@@ -8,7 +8,6 @@ public class GitStatusPanel : GitPanel {
   // Messages...
   private static GUIContent UNSTAGED_CHANGES_LABEL = new GUIContent("Unstaged Changes:"),
                             STAGED_CHANGES_LABEL = new GUIContent("Staged Changes:"),
-                            CURRENT_BRANCH_LABEL = new GUIContent("Current Branch:"),
                             STAGE_CHANGES_BUTTON = new GUIContent("Stage Changed"),
                             SIGN_OFF_BUTTON = new GUIContent("Sign Off"),
                             COMMIT_BUTTON = new GUIContent("Commit"),
@@ -20,8 +19,9 @@ public class GitStatusPanel : GitPanel {
   private static Texture DEFAULT_FILE_ICON = EditorGUIUtility.ObjectContent(null, typeof(MonoScript)).image;
   private static GUIContent DUMMY_CONTENT = new GUIContent("X");
   private static GUILayoutOption ICON_WIDTH = GUILayout.Width(16),
-                                 ITEM_HEIGHT = GUILayout.Height(21),
-                                 MAX_ITEM_HEIGHT = GUILayout.MaxHeight(21);
+                                 ITEM_HEIGHT = GUILayout.Height(16),
+                                 MAX_ITEM_HEIGHT = GUILayout.MaxHeight(16);
+  private static int ITEM_BASELINE = 2;
 
 
   // Overarching state for the panel.
@@ -40,7 +40,6 @@ public class GitStatusPanel : GitPanel {
     // Set up data we can't set up until OnGUI.
     if(editorLineHeight <= 0) {
       editorLineHeight = GUI.skin.GetStyle("textarea").CalcHeight(DUMMY_CONTENT, 100);
-      boldLabelSpaceSize = SizeOfSpace(GitStyles.BoldLabel);
     }
     if(isDirty) {
       OnRefresh();
@@ -71,19 +70,23 @@ public class GitStatusPanel : GitPanel {
       commitMessage += "\n" + signOffMessage;
   }
 
-  public void StagePath(string path) {
-    GitWrapper.StagePath(path);
+  public void StagePath(GitWrapper.ChangeType changeType, string path) {
+    if(changeType == GitWrapper.ChangeType.Deleted) {
+      GitWrapper.RemovePath(path);
+    } else {
+      GitWrapper.StagePath(path);
+    }
     isDirty = true;
   }
 
-  public void UnstagePath(string path) {
+  public void UnstagePath(GitWrapper.ChangeType changeType, string path) {
     GitWrapper.UnstagePath(path);
     isDirty = true;
   }
 
 
   // Helpers.
-  protected delegate void WholeFileCommand(string path);
+  protected delegate void WholeFileCommand(GitWrapper.ChangeType changeType, string path);
   protected delegate bool FilterDelegate(GitWrapper.Change change);
   protected delegate GitWrapper.ChangeType ChangeTypeDelegate(GitWrapper.Change change);
 
@@ -103,7 +106,7 @@ public class GitStatusPanel : GitPanel {
     return c;
   }
 
-  protected class SelectionState {
+  public class ListSelectionState {
     private HashSet<string> selection = new HashSet<string>();
     private List<string> selectionWithOrder = new List<string>();
 
@@ -153,39 +156,81 @@ public class GitStatusPanel : GitPanel {
     }
   }
 
+  public class ListView {
+    private int _controlID;
+    public int controlID {
+      get { return _controlID; }
+      set {
+        if(_controlID != value) {
+          Reset();
+          _controlID = value;
+        }
+      }
+    }
+    public bool hasFocus = false;
+    public ListSelectionState selection;
+
+    public ListView() {
+      Reset();
+    }
+
+    public void Reset() {
+      hasFocus = false;
+      selection = null;
+    }
+
+    //public void OnFocus() { Debug.Log("ListView.OnFocus"); }
+    //public void OnLostFocus() { Debug.Log("ListView.OnLostFocus"); }
+
+    public new string ToString() {
+      return "id=" + controlID + ",hasFocus=" + hasFocus;
+    }
+  }
+
+  private bool panelHasFocus = false;
+  public override void OnFocus() { panelHasFocus = true; }
+  public override void OnLostFocus() { panelHasFocus = false; }
+
   [System.NonSerialized]
   private Hashtable iconCache = new Hashtable();
-  protected bool ShowFile(int id, SelectionState selectionCache, string path, GitWrapper.ChangeType status, WholeFileCommand cmd) {
+  protected bool ShowFile(ListView state, string path, GitWrapper.ChangeType status, WholeFileCommand cmd) {
+    Event current = Event.current;
     bool isChanged = false;
-    bool isSelected = selectionCache.IsSelected(path);
-    bool hasFocus = (GUIUtility.hotControl == id);
-    GUIStyle style = isSelected ? (hasFocus ? GitStyles.FileLabelSelected : GitStyles.FileLabelSelectedUnfocused) : GitStyles.FileLabel;
+    bool isSelected = state.selection.IsSelected(path);
+    GUIStyle style = isSelected ? (panelHasFocus && state.hasFocus ? GitStyles.FileLabelSelected : GitStyles.FileLabelSelectedUnfocused) : GitStyles.FileLabel;
+
+    GUIContent tmp = null;
+    if(!iconCache.ContainsKey(path)) {
+      tmp = new GUIContent() {
+        image = AssetDatabase.GetCachedIcon(path),
+        text = null
+      };
+      if(tmp.image == null)
+        tmp.image = DEFAULT_FILE_ICON;
+      iconCache[path] = tmp;
+    }
+    tmp = (GUIContent)iconCache[path];
 
     GUILayout.BeginHorizontal();
-      GUIContent tmp = null;
-      if(!iconCache.ContainsKey(path)) {
-        tmp = new GUIContent() {
-          image = AssetDatabase.GetCachedIcon(path),
-          text = null
-        };
-        if(tmp.image == null)
-          tmp.image = DEFAULT_FILE_ICON;
-        iconCache[path] = tmp;
-      }
-      tmp = (GUIContent)iconCache[path];
-      if(GUILayout.Button(tmp, style, ICON_WIDTH, ITEM_HEIGHT)) {
-        isChanged = true;
-        cmd(path);
-        selectionCache.Unselect(path);
-      }
+      GUILayout.Label(tmp, style, ICON_WIDTH, ITEM_HEIGHT);
+      Rect iconPosition = GUILayoutUtility.GetLastRect();
+
       Color c = GUI.contentColor;
       GUI.contentColor = ColorForChangeType(status);
-      Rect r = EditorGUILayout.BeginVertical(style, MAX_ITEM_HEIGHT);
+      Rect labelPosition = EditorGUILayout.BeginVertical(style, MAX_ITEM_HEIGHT);
         GUILayout.FlexibleSpace();
         GUILayout.Label(path, style);
-        GUILayout.Space(3);
+        GUILayout.Space(ITEM_BASELINE);
       EditorGUILayout.EndVertical();
-      if(GUI.Button(r, GUIHelper.NoContent, GUIHelper.NoStyle)) {
+      GUI.contentColor = c;
+    GUILayout.EndHorizontal();
+
+    if(current.type == EventType.MouseDown) {
+      if(iconPosition.Contains(current.mousePosition)) {
+        isChanged = true;
+        cmd(status, path);
+        state.selection.Unselect(path);
+      } else if(labelPosition.Contains(current.mousePosition)) {
         isChanged = true;
         isSelected = !isSelected;
         bool addToSelection = false, rangeSelection = false;
@@ -197,35 +242,67 @@ public class GitStatusPanel : GitPanel {
           rangeSelection = true;
 
         if(!addToSelection && !rangeSelection)
-          selectionCache.Clear();
-        selectionCache.Set(path, isSelected);
-        // TODO: For range selection we need the list of files..
+          state.selection.Clear();
+        state.selection.Set(path, isSelected);
+        // TODO: For range selection we need the list of files, index of last selection, etc.
       }
-      GUI.contentColor = c;
-    GUILayout.EndHorizontal();
+    }
+
     return isChanged;
   }
 
-  protected Vector2 FileListView(GUIContent label, Vector2 scrollPos, FilterDelegate filter, ChangeTypeDelegate changeTypeFetcher, WholeFileCommand cmd, SelectionState selectionCache) {
-    GUILayout.Label(label, GitStyles.BoldLabel, GUIHelper.NoExpandWidth);
+
+  protected Vector2 FileListView(GUIContent label, Vector2 scrollPos, FilterDelegate filter, ChangeTypeDelegate changeTypeFetcher, WholeFileCommand cmd, ListSelectionState selectionCache) {
     int id = GUIUtility.GetControlID(FocusType.Passive);
-    bool hasFocus = GUIUtility.hotControl == id;
+    ListView state = (ListView)GUIUtility.GetStateObject(typeof(ListView), id);
+    state.controlID = id;
+    state.selection = selectionCache;
+
+    Event current = Event.current;
     bool isChanged = false;
-    scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GitStyles.FileListBox);
-      if(changes != null) {
-        for(int i = 0; i < changes.Length; i++) {
-          if(filter(changes[i])) {
-            isChanged = isChanged || ShowFile(id, selectionCache, changes[i].path, changeTypeFetcher(changes[i]), cmd);
+
+    GUILayout.Label(label, GitStyles.BoldLabel, GUIHelper.NoExpandWidth);
+    Rect listPosition = EditorGUILayout.BeginVertical();
+      scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GitStyles.FileListBox);
+        if(changes != null) {
+          for(int i = 0; i < changes.Length; i++) {
+            if(filter(changes[i])) {
+              isChanged = isChanged || ShowFile(state, changes[i].path, changeTypeFetcher(changes[i]), cmd);
+            }
           }
         }
-      }
-    EditorGUILayout.EndScrollView();
-    Rect r = GUILayoutUtility.GetLastRect();
-    isChanged = isChanged || ((Event.current.type == EventType.MouseDown) && r.Contains(Event.current.mousePosition));
-    if(isChanged && !hasFocus) {
-      GUIUtility.hotControl = id;
-      Shell.Repaint();
+      EditorGUILayout.EndScrollView();
+    EditorGUILayout.EndVertical();
+
+    switch(current.type) {
+      case EventType.MouseDown:
+        if(listPosition.Contains(current.mousePosition)) {
+          GUIUtility.hotControl = id;
+          GUIUtility.keyboardControl = id;
+          current.Use();
+        } else {
+          if(GUIUtility.keyboardControl == id) {
+            GUIUtility.keyboardControl = 0;
+          }
+        }
+        break;
+      case EventType.MouseUp:
+        if(GUIUtility.hotControl == id) {
+          // Done dragging...
+          GUIUtility.hotControl = 0;
+          current.Use();
+        }
+        break;
     }
+    state.hasFocus = GUIUtility.keyboardControl == id;
+    if(!state.hasFocus) {
+      state.selection.Clear();
+    }
+    if(isChanged) {
+      GUI.changed = true;
+      current.Use();
+    }
+
     return scrollPos;
   }
 
@@ -247,19 +324,19 @@ public class GitStatusPanel : GitPanel {
 
 
   // Sub-views.
-  private SelectionState workingSetSelectionCache = new SelectionState();
+  private ListSelectionState workingSetSelectionCache = new ListSelectionState();
   private Vector2 workingScrollPos;
   protected void ShowUnstagedChanges() {
     workingScrollPos = FileListView(UNSTAGED_CHANGES_LABEL, workingScrollPos, WorkingSetFilter, WorkingSetFetcher, StagePath, workingSetSelectionCache);
   }
 
-  private SelectionState indexSetSelectionCache = new SelectionState();
+  private ListSelectionState indexSetSelectionCache = new ListSelectionState();
   private Vector2 indexScrollPos;
   protected void ShowStagedChanges() {
     indexScrollPos = FileListView(STAGED_CHANGES_LABEL, indexScrollPos, IndexSetFilter, IndexSetFetcher, UnstagePath, indexSetSelectionCache);
   }
 
-  private float editorLineHeight = -1, boldLabelSpaceSize = -1;
+  private float editorLineHeight = -1;
   private string commitMessage = "";
   private bool amendCommit = false;
   protected void ShowCommitMessageEditor() {
@@ -311,16 +388,10 @@ public class GitStatusPanel : GitPanel {
   public override void OnGUI() {
     Init();
 
-    Color c = GUI.color;
     EditorGUILayoutHorizontalPanes.Begin(overallConfiguration);
       GUILayout.BeginVertical();
-        GUILayout.BeginHorizontal();
-          GUILayout.Label(CURRENT_BRANCH_LABEL, GitStyles.BoldLabel, GUIHelper.NoExpandWidth);
-          GUILayout.Space(boldLabelSpaceSize);
-          GUI.color = isDetachedHeadMode ? GitStyles.ErrorColor : GitStyles.TextColor;
-          GUILayout.Label(currentBranchLabel, GitStyles.WhiteBoldLabel, GUIHelper.NoExpandWidth);
-          GUI.color = c;
-        GUILayout.EndHorizontal();
+        EditorGUILayout.HelpBox(currentBranchLabel.text, isDetachedHeadMode ? MessageType.Warning : MessageType.Info, true);
+
         Space();
 
         EditorGUILayoutVerticalPanes.Begin(changesConfiguration);

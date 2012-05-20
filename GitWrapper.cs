@@ -3,8 +3,15 @@ using System.Collections.Generic;
 using UnityEditor;
 
 public static class GitWrapper {
+  public static bool IsVersioningEnabled { get { return EditorSettings.externalVersionControl == ExternalVersionControl.Generic; } }
+  public static bool IsVersioningIdeal { get { return EditorSettings.serializationMode == SerializationMode.ForceText; } }
+
+  public static bool IsGitPresent { get { return GitBinary != null; } }
+
   private static bool _isWorking = true;
-  public static bool IsWorking { get { return _isWorking && (EditorSettings.externalVersionControl == ExternalVersionControl.Generic); } }
+  public static bool IsWorking { get { return _isWorking; } }
+
+  public static bool IsUsable { get { return IsGitPresent && IsVersioningEnabled && IsWorking; } }
 
   public static string CurrentBranch {
     get {
@@ -21,14 +28,14 @@ public static class GitWrapper {
   public static string GetDiff(string path, bool wordDiff) {
     try {
       string diffParams = wordDiff ? "--word-diff=porcelain " : "";
-      return ShellHelpers.OutputFromCommand("git", "diff " + diffParams + "-- " + QuotePath(path));
+      return ShellHelpers.OutputFromCommand("git", "diff --submodule=log " + diffParams + "-- " + QuotePath(path));
     } catch {
       _isWorking = false;
       return null;
     }
-    
+
   }
-  
+
   public enum RefKind {
     Branch, TrackingBranch, Tag, Other
   }
@@ -42,7 +49,7 @@ public static class GitWrapper {
       get {
         if(!isInitialized) {
           isInitialized = true;
-          if(fullName.StartsWith("refs/heads/")) 
+          if(fullName.StartsWith("refs/heads/"))
             _kind = RefKind.Branch;
           else if(fullName.StartsWith("refs/remotes/"))
             _kind = RefKind.TrackingBranch;
@@ -182,22 +189,39 @@ public static class GitWrapper {
 
   public static Change[] Status {
     get {
-      Change[] output = null;
+      List<Change> changes = new List<Change>();
       try {
         string tmp = ShellHelpers.OutputFromCommand("git", "status --porcelain --untracked-files=all -z");
         string[] records = tmp.Split('\0');
-        output = new Change[records.Length];
         for(int i = 0; i < records.Length; i++) {
-          output[i] = new Change() {
-            indexStatus = ChangeTypeFromChar(records[i][0]),
-            workingStatus = ChangeTypeFromChar(records[i][1]),
-            path = records[i].Substring(3)
-          };
+          ChangeType iStatus = ChangeTypeFromChar(records[i][0]);
+          ChangeType wStatus = ChangeTypeFromChar(records[i][1]);
+
+          if(iStatus == ChangeType.Renamed) {
+            // Need to consume a couple entries here...
+            changes.Add(new Change() {
+              indexStatus = ChangeTypeFromChar('A'),
+              workingStatus = wStatus,
+              path = records[i].Substring(3)
+            });
+            changes.Add(new Change() {
+              indexStatus = ChangeTypeFromChar('D'),
+              workingStatus = wStatus,
+              path = records[i + 1]
+            });
+            i++;
+          } else {
+            changes.Add(new Change() {
+              indexStatus = iStatus,
+              workingStatus = wStatus,
+              path = records[i].Substring(3)
+            });
+          }
         }
       } catch {
         // TODO: Hrm....
       }
-      return output;
+      return changes.ToArray();
     }
   }
 
@@ -214,15 +238,15 @@ public static class GitWrapper {
   }
 
   public static void StagePath(string path) {
-    string tmp = ShellHelpers.OutputFromCommand("git", "add --ignore-errors -- " + QuotePath(path));
-    if(tmp != "")
-      UnityEngine.Debug.Log("<" + tmp + ">");
+    ShellHelpers.OutputFromCommand("git", "add --ignore-errors -- " + QuotePath(path));
+  }
+
+  public static void RemovePath(string path) {
+    ShellHelpers.OutputFromCommand("git", "rm -- " + QuotePath(path));
   }
 
   public static void UnstagePath(string path) {
-    string tmp = ShellHelpers.OutputFromCommand("git", "reset HEAD -- " + QuotePath(path));
-    if(tmp != "")
-      UnityEngine.Debug.Log("<" + tmp + ">");
+    ShellHelpers.OutputFromCommand("git", "reset HEAD -- " + QuotePath(path));
   }
 
   public static string ConfigGet(string key) {
@@ -234,13 +258,15 @@ public static class GitWrapper {
     }
   }
 
+  private static string _gitBinary = null;
   public static string GitBinary {
     get {
       // TODO: This is OSX-specific.  We should fix that.
       try {
-        return ShellHelpers.OutputFromCommand("which", "git");
+        if(_gitBinary == null)
+          _gitBinary =  ShellHelpers.OutputFromCommand("which", "git");
+        return _gitBinary;
       } catch {
-        _isWorking = false;
         return null;
       }
     }
